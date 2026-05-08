@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: source
+    database: ehr
+    schema: source
+    tables:
+      - name: allergies
+      - name: careplans
+      - name: conditions
+      - name: encounters
+      - name: immunizations
+      - name: medications
+      - name: observations
+      - name: patients
+      - name: procedures
+      
