@@ -5,4 +5,4 @@ SELECT
     ENCOUNTER AS Encounter_ID,
     CODE AS Code,
     DESCRIPTION AS Description
-FROM {{ source('source', 'conditions') }}
+FROM {{ source('ehr', 'conditions') }}

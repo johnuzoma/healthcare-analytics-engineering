@@ -16,4 +16,4 @@ SELECT
     GENDER AS Gender,
     BIRTHPLACE AS Birth_Place,
     ADDRESS AS Home_Address
-FROM {{ source('source', 'patients') }}
+FROM {{ source('ehr', 'patients') }}
