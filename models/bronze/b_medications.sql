@@ -7,4 +7,4 @@ SELECT
     DESCRIPTION AS Description,
     REASONCODE AS Reason_Code,
     REASONDESCRIPTION AS Reason_Description
-FROM {{ source('source', 'medications') }}
+FROM {{ source('ehr', 'medications') }}

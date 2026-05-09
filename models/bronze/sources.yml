@@ -1,17 +1,54 @@
 version: 2
 
 sources:
-  - name: source
+  - name: ehr
     database: ehr
     schema: source
     tables:
       - name: allergies
+        description: >
+          The table contains data about patient allergies, including the start and stop dates of each allergy, as well as details such as the patient and encounter information. This data can be used for tracking allergy history, analyzing patient safety issues, and enhancing clinical decision-making.
       - name: careplans
+        description: >
+          The table contains information about care plans associated with patients. It includes details such as the start and stop dates of the care plans, patient identifiers, and encounter information. This data can be utilized for tracking patient care timelines, analyzing care plan effectiveness, and understanding the reasons for specific care plans.
       - name: conditions
+        description: >
+          This table contains information about patient conditions recorded within encounters. Key data points include the start and stop dates of the conditions, patient identifiers, encounter details, condition codes, and descriptions. This information can be utilized for tracking patient health over time, analyzing treatment outcomes, and understanding the prevalence of specific conditions within a patient population.
       - name: encounters
+        description: >
+          The table captures encounter data related to patients within the healthcare system. It includes details such as the patient ID, encounter date, specific codes, and descriptions related to the nature of the encounter and the reasons for it. This table can be useful for analyzing patient interactions, tracking health outcomes, and conducting research on encounter patterns.
       - name: immunizations
+        description: >
+          The table contains records of immunizations administered to patients. It includes key details like the date of immunization, patient identification, related encounter information, and the specific immunization code and description. This data can be used for tracking vaccination schedules, analyzing immunization rates, and generating reports on patient immunization history.
       - name: medications
+        description: >
+          The table contains data related to medications prescribed to patients. It includes information such as the start and stop dates of medication, patient identifiers, and descriptions of the medications. This data can be used for tracking medication usage, analyzing treatment plans, and understanding patient encounters related to medication management.
       - name: observations
+        description: >
+          The table captures observations related to patient encounters in a healthcare context. It includes data about the date of the observation, patient identifiers, encounter details, coded medical information, descriptions of the observations, the value measured, and the units used. This table can be used for analyzing patient health trends, tracking treatment outcomes, and reviewing clinical documentation.
+        columns:
+          - name: DATE
+            data_tests:
+              - not_null
+          - name: PATIENT
+            data_tests:
+              - not_null
       - name: patients
+        description: >
+          The table contains demographic information about patients. It includes details such as names, birthdates, gender, and ethnicity. This data can be utilized for analyzing patient demographics, tracking health trends, and improving care strategies based on patient characteristics. Additionally, it may assist in identifying patterns in treatment outcomes across different demographic groups.
+        columns:
+          - name: ID
+            #data_tests:
+            #  - unique
+            #  - not_null
       - name: procedures
+        description: >
+          The table contains records of medical procedures associated with patients. It includes information on the date of the procedure, patient identification, encounter details, codes representing the procedures, and associated reason codes along with their descriptions. Possible use cases include analyzing procedure trends, tracking patient care events, and reviewing the reasons for specific medical interventions.
+        columns:
+          - name: DATE
+            data_tests:
+              - not_null
+          - name: PATIENT
+            data_tests:
+              - not_null
       

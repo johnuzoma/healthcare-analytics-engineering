@@ -6,4 +6,4 @@ SELECT
     DESCRIPTION AS Description,
     VALUE AS Value,
     UNITS AS Unit
-FROM {{ source('source', 'observations') }}
+FROM {{ source('ehr', 'observations') }}
