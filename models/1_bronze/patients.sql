@@ -1,0 +1,22 @@
+SELECT
+    Id AS id,
+    BIRTHDATE AS birth_date,
+    DEATHDATE AS death_date,
+    SSN AS ssn,
+    DRIVERS AS drivers,
+    PASSPORT AS passport,
+    PREFIX AS prefix,
+    FIRST AS first_name,
+    LAST AS last_name,
+    SUFFIX AS suffix,
+    MAIDEN AS maiden_name,
+    MARITAL AS marital_status,
+    RACE AS race,
+    ETHNICITY AS ethnicity,
+    GENDER AS gender,
+    BIRTHPLACE AS birth_place,
+    ADDRESS AS address,
+    CITY AS city,
+    STATE AS state,
+    COUNTY AS county
+FROM {{ source('synthea_ehr', 'patients') }}
