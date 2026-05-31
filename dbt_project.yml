@@ -41,15 +41,15 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   healthcare_analytics_engineering:
     # Applies to all files under models/example/
-    bronze:
+    1_bronze:
       +materialized: view
-      +schema: bronze
-    silver:
+      +schema: 1_bronze
+    2_silver:
       +materialized: table
-      +schema: silver
-    gold:
+      +schema: 2_silver
+    3_gold:
       +materialized: table
-      +schema: gold
+      +schema: 3_gold
 
 flags:
   use_managed_iceberg: true

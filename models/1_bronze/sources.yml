@@ -1,9 +1,9 @@
 version: 2
 
 sources:
-  - name: ehr
-    database: ehr
-    schema: source
+  - name: synthea_ehr
+    database: synthea_ehr
+    schema: 0_source
     tables:
       - name: allergies
         description: >
@@ -14,9 +14,11 @@ sources:
       - name: conditions
         description: >
           This table contains information about patient conditions recorded within encounters. Key data points include the start and stop dates of the conditions, patient identifiers, encounter details, condition codes, and descriptions. This information can be utilized for tracking patient health over time, analyzing treatment outcomes, and understanding the prevalence of specific conditions within a patient population.
+      - name: devices
       - name: encounters
         description: >
           The table captures encounter data related to patients within the healthcare system. It includes details such as the patient ID, encounter date, specific codes, and descriptions related to the nature of the encounter and the reasons for it. This table can be useful for analyzing patient interactions, tracking health outcomes, and conducting research on encounter patterns.
+      - name: imaging_studies
       - name: immunizations
         description: >
           The table contains records of immunizations administered to patients. It includes key details like the date of immunization, patient identification, related encounter information, and the specific immunization code and description. This data can be used for tracking vaccination schedules, analyzing immunization rates, and generating reports on patient immunization history.
@@ -33,6 +35,7 @@ sources:
           - name: PATIENT
             data_tests:
               - not_null
+      - name: organizations
       - name: patients
         description: >
           The table contains demographic information about patients. It includes details such as names, birthdates, gender, and ethnicity. This data can be utilized for analyzing patient demographics, tracking health trends, and improving care strategies based on patient characteristics. Additionally, it may assist in identifying patterns in treatment outcomes across different demographic groups.
@@ -41,6 +44,8 @@ sources:
             #data_tests:
             #  - unique
             #  - not_null
+      - name: payer_transitions
+      - name: payers
       - name: procedures
         description: >
           The table contains records of medical procedures associated with patients. It includes information on the date of the procedure, patient identification, encounter details, codes representing the procedures, and associated reason codes along with their descriptions. Possible use cases include analyzing procedure trends, tracking patient care events, and reviewing the reasons for specific medical interventions.
@@ -51,4 +56,4 @@ sources:
           - name: PATIENT
             data_tests:
               - not_null
-      
+      - name: providers      

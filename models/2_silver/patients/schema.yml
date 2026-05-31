@@ -1,0 +1,27 @@
+models:
+  - name: ref_patients
+    columns:
+      - name: ID
+        data_tests:
+          - unique:
+              config:
+                store_failures: true
+          - not_null:
+              config:
+                store_failures: false
+      - name: Birth_Date
+        data_tests:
+          - unique:
+              config:
+                store_failures: true
+          - not_null:
+              config:
+                store_failures: false
+      - name: Death_Date
+        data_tests:
+          - unique:
+              config:
+                store_failures: true
+          - not_null:
+              config:
+                store_failures: false
