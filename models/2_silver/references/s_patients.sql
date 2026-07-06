@@ -1,0 +1,21 @@
+SELECT
+    id,
+    birth_date,
+    death_date,
+    ssn,
+    drivers,
+    passport,
+    prefix,
+    CONCAT(first_name, ' ', last_name) AS full_name,
+    suffix,
+    maiden_name,
+    marital_status,
+    race,
+    ethnicity,
+    gender,
+    birth_place,
+    address,
+    city,
+    state,
+    county
+FROM {{ ref('b_patients') }}
