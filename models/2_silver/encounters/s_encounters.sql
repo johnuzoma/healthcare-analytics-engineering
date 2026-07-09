@@ -3,6 +3,7 @@ SELECT
     b_encounters.start_date_time,
     b_encounters.end_date_time,
     b_encounters.patient_id,
+    DATEDIFF(DAY, b_encounters.start_date_time, b_encounters.end_date_time) AS length_of_stay,
     b_encounters.organization_id,
     b_encounters.provider_id,
     b_encounters.payer_id,
@@ -35,6 +36,7 @@ SELECT
         THEN 1
         ELSE 0
     END AS had_a_condition,
+    YEAR(b_conditions.start_date) AS condition_onset_year,
     DATEDIFF(DAY, b_conditions.start_date, b_conditions.end_date) AS condition_duration_days,
     b_conditions.description AS condition_description,
 
@@ -43,8 +45,18 @@ SELECT
         THEN 1
         ELSE 0
     END AS had_an_allergy,
+    YEAR(b_allergies.start_date) AS allergy_onset_year,
     DATEDIFF(YEAR, b_allergies.start_date, b_allergies.end_date) AS allergy_duration_years,
-    b_allergies.description AS allergy_description
+    b_allergies.description AS allergy_description,
+
+    CASE
+        WHEN b_procedures.encounter_id IS NOT NULL
+        THEN 1
+        ELSE 0
+    END AS had_a_procedure,
+    b_procedures.description AS procedure_description,
+    b_procedures.base_cost AS procedure_base_cost,
+    b_procedures.reason_description AS procedure_reason
 
 FROM {{ ref('b_encounters') }}
 
@@ -63,3 +75,7 @@ LEFT JOIN {{ ref('b_conditions') }}
 LEFT JOIN {{ ref('b_allergies') }}
     ON b_encounters.id = b_allergies.encounter_id
     AND b_encounters.patient_id = b_allergies.patient_id
+
+LEFT JOIN {{ ref('b_procedures') }}
+    ON b_encounters.id = b_procedures.encounter_id
+    AND b_encounters.patient_id = b_procedures.patient_id
