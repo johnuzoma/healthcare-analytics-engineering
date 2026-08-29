@@ -1,32 +1,32 @@
-WITH transformed_patients AS (
+WITH transformed_patients AS ( 
     SELECT
-        id,
+        Id AS id,
         CASE
-            WHEN death_date IS NULL THEN 'Y'
+            WHEN DEATHDATE IS NULL THEN 'Y'
             ELSE 'N'
         END AS is_alive,
-        birth_date,
-        death_date,
-        DATEDIFF(YEAR, birth_date, COALESCE(death_date, CURRENT_DATE())) AS age,
+        BIRTHDATE,
+        DEATHDATE,
+        DATEDIFF(YEAR, BIRTHDATE, COALESCE(DEATHDATE, CURRENT_DATE())) AS age,
 
-        DATEDIFF(YEAR, death_date, CURRENT_DATE()) AS years_since_death,
-        ssn,
-        drivers,
-        passport,
-        prefix,
-        CONCAT(first_name, ' ', last_name) AS full_name,
-        suffix,
-        maiden_name,
-        marital_status,
-        INITCAP(race) AS race,
-        INITCAP(ethnicity) AS ethnicity,
-        gender,
-        birth_place,
-        address AS patient_address,
-        city,
-        state AS patient_state,
-        county
-    FROM {{ ref('b_patients') }}
+        DATEDIFF(YEAR, DEATHDATE, CURRENT_DATE()) AS years_since_death,
+        SSN AS ssn,
+        DRIVERS AS drivers,
+        PASSPORT AS passport,
+        PREFIX AS prefix,
+        CONCAT(FIRST, ' ', LAST) AS full_name,
+        SUFFIX AS suffix,
+        MAIDEN AS maiden_name,
+        MARITAL AS marital_status,
+        INITCAP(RACE) AS race,
+        INITCAP(ETHNICITY) AS ethnicity,
+        GENDER AS gender,
+        BIRTHPLACE AS birth_place,
+        ADDRESS AS patient_address,
+        CITY AS city,
+        STATE AS patient_state,
+        COUNTY AS county
+    FROM {{ source('bronze', 'patients') }}
 )
 
 ,final AS (

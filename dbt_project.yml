@@ -41,19 +41,12 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   healthcare_analytics_engineering:
     # Applies to all files under models/example/
-    1_bronze:
-      +materialized: view
-      +schema: 1_bronze
     2_silver:
       +materialized: table
       +schema: 2_silver
     3_gold:
       +materialized: table
       +schema: 3_gold
-      +tblproperties:
-        'delta.columnMapping.mode': 'name'
-        'delta.minReaderVersion': '2'
-        'delta.minWriterVersion': '5'
 
 flags:
   use_managed_iceberg: true

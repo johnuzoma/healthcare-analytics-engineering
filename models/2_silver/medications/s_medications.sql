@@ -1,41 +1,42 @@
 WITH transformed_meds AS (
     SELECT
-        CAST(start_date_time AS DATE) AS med_start_date,
-        DATE_FORMAT(start_date_time, 'HH:mm:ss') AS med_start_time,
-        CAST(end_date_time AS DATE) AS med_end_date,
-        DATE_FORMAT(end_date_time, 'HH:mm:ss') AS med_end_time,
-        patient_id,
-        payer_id,
-        encounter_id,
-        code,
-        description AS med_description,
-        base_cost,
-        payer_coverage,
-        dispenses,
-        total_cost,
-        reason,
+        CAST(START AS DATE) AS med_start_date,
+        DATE_FORMAT(START, 'HH:mm:ss') AS med_start_time,
+        CAST(STOP AS DATE) AS med_end_date,
+        DATE_FORMAT(STOP, 'HH:mm:ss') AS med_end_time,
+        PATIENT AS patient_id,
+        PAYER AS payer_id,
+        ENCOUNTER AS encounter_id,
+        CODE AS code,
+        DESCRIPTION AS med_description,
+        BASE_COST AS base_cost,
+        PAYER_COVERAGE AS payer_coverage,
+        DISPENSES AS dispenses,
+        TOTALCOST AS total_cost,
+        REASONCODE AS reason_code,
+        REASONDESCRIPTION AS reason,
 
         DATEDIFF(
             DAY,
-            LAG(end_date_time) OVER (PARTITION BY patient_id, code ORDER BY start_date_time),
-            start_date_time
+            LAG(STOP) OVER (PARTITION BY PATIENT, CODE ORDER BY START),
+            START
         ) AS days_since_last_fill_ended,
-        DATEDIFF(DAY, start_date_time, end_date_time) AS days_supply,
+        DATEDIFF(DAY, START, STOP) AS days_supply,
 
-        CASE WHEN end_date_time IS NULL THEN 'Ongoing' ELSE 'Completed' END AS med_status,
+        CASE WHEN STOP IS NULL THEN 'Ongoing' ELSE 'Completed' END AS med_status,
 
         CASE 
-            WHEN ROW_NUMBER() OVER (PARTITION BY patient_id, code ORDER BY start_date_time) > 1 THEN 'Refill' 
+            WHEN ROW_NUMBER() OVER (PARTITION BY PATIENT, CODE ORDER BY START) > 1 THEN 'Refill' 
             ELSE 'Initial' 
         END AS fill_type
-    FROM {{ ref('b_medications') }}    
+    FROM {{ source('bronze', 'medications') }}    
 ),
 
 encounters AS (
     SELECT
-        id,
-        INITCAP(encounter_class) AS encounter_class
-    FROM {{ ref('b_encounters') }}
+        Id AS id,
+        INITCAP(ENCOUNTERCLASS) AS encounter_class
+    FROM {{ source('bronze', 'encounters') }}
 ),
 
 enhancements AS (

@@ -14,6 +14,6 @@ SELECT
   covered_immunizations,
   uncovered_immunizations,
   unique_customers,
-  qols_avg,
+  avg_qols,
   member_months
 FROM {{ ref('s_payers') }}

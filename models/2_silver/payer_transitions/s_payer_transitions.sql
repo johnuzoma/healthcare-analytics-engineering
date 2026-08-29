@@ -1,22 +1,22 @@
 WITH payers AS (
     SELECT
-        id,
-        name
-    FROM {{ ref('b_payers') }}
+        Id AS id,
+        NAME AS name
+    FROM {{ source('bronze', 'payers') }}
 )
 
 ,payer_transitions AS (
     SELECT
-        patient_id,
-        start_year,
-        end_year,
-        (end_year - start_year) AS duration_years,
-        start_year - LAG(end_year) OVER (PARTITION BY patient_id ORDER BY start_year) AS prior_gap_years,
-        LAG(payer_id) OVER (PARTITION BY patient_id ORDER BY start_year) AS previous_payer_id,
-        payer_id AS current_payer_id,
-        COALESCE(ownership, 'Unknown') AS ownership,
-        ROW_NUMBER() OVER (PARTITION BY patient_id ORDER BY start_year) - 1 AS switch_sequence
-    FROM {{ ref('b_payer_transitions') }}
+        PATIENT AS patient_id,
+        START_YEAR AS start_year,
+        END_YEAR AS end_year,
+        (END_YEAR - START_YEAR) AS duration_years,
+        START_YEAR - LAG(END_YEAR) OVER (PARTITION BY PATIENT ORDER BY START_YEAR) AS prior_gap_years,
+        LAG(PAYER) OVER (PARTITION BY PATIENT ORDER BY START_YEAR) AS previous_payer_id,
+        PAYER AS current_payer_id,
+        COALESCE(OWNERSHIP, 'Unknown') AS ownership,
+        ROW_NUMBER() OVER (PARTITION BY PATIENT ORDER BY START_YEAR) - 1 AS switch_sequence
+    FROM {{ source('bronze', 'payer_transitions') }}
 )
 
 SELECT
@@ -25,7 +25,7 @@ SELECT
     COALESCE(PT.previous_payer_id, 'NO_INSURANCE') AS previous_payer_id,
     PT.current_payer_id,
     COALESCE(prev_payer.name, 'NO_INSURANCE') AS previous_payer_name,
-    curr_payer.name AS current_payer_name,
+    curr_payer.NAME AS current_payer_name,
     PT.start_year,
     PT.end_year,
     PT.duration_years,

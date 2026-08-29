@@ -1,9 +1,9 @@
 version: 2
 
 sources:
-  - name: synthea_ehr
+  - name: bronze
     database: synthea_ehr
-    schema: 0_source
+    schema: 1_bronze
     config:
       freshness:
         warn_after: {count: 12, period: hour}

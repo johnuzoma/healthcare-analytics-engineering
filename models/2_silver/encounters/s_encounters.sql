@@ -1,85 +1,84 @@
 SELECT
-    b_encounters.id,
-    b_encounters.start_date_time,
-    CAST(b_encounters.start_date_time AS DATE) AS start_date,
-    DATE_FORMAT(start_date_time, 'HH:mm:ss') AS start_time,
-    b_encounters.end_date_time,
-    CAST(b_encounters.end_date_time AS DATE) AS end_date,
-    DATE_FORMAT(b_encounters.end_date_time, 'HH:mm:ss') AS end_time,
-    b_encounters.patient_id,
-    DATEDIFF(DAY, b_encounters.start_date_time, b_encounters.end_date_time) AS length_of_stay,
-    b_encounters.organization_id,
-    b_encounters.provider_id,
-    b_encounters.payer_id,
-    INITCAP(b_encounters.encounter_class),
-    b_encounters.description,
-    b_encounters.base_encounter_cost,
-    b_encounters.total_claim_cost,
-    b_encounters.payer_coverage,
-    b_encounters.reason_description,
+    encounters.Id AS visit_id,
+    CAST(encounters.START AS DATE) AS visit_start_date,
+    DATE_FORMAT(encounters.START, 'HH:mm:ss') AS visit_start_time,
+    CAST(encounters.STOP AS DATE) AS visit_end_date,
+    DATE_FORMAT(encounters.STOP, 'HH:mm:ss') AS visit_end_time,
+    encounters.PATIENT AS patient_Id,
+    DATEDIFF(DAY, encounters.START, encounters.STOP) AS length_of_stay,
+    encounters.ORGANIZATION AS organization_id,
+    encounters.PROVIDER AS provider_id,
+    encounters.PAYER AS payer_id,
+    INITCAP(encounters.ENCOUNTERCLASS) AS encounter_class,
+    encounters.DESCRIPTION AS description,
+    encounters.BASE_ENCOUNTER_COST AS base_encounter_cost,
+    encounters.TOTAL_CLAIM_COST AS total_claim_cost,
+    encounters.PAYER_COVERAGE AS payer_coverage,
+    encounters.REASONDESCRIPTION AS reason,
     
     CASE
-        WHEN b_careplans.encounter_id IS NOT NULL
+        WHEN careplans.ENCOUNTER IS NOT NULL
         THEN 1
         ELSE 0
     END AS had_a_careplan,
-    DATEDIFF(MONTH, b_careplans.start_date, b_careplans.end_date) AS careplan_duration_months,
-    b_careplans.description AS careplan_description,
-    b_careplans.reason_description AS careplan_reason,
+    DATEDIFF(MONTH, careplans.START, careplans.STOP) AS careplan_duration_months,
+    careplans.DESCRIPTION AS careplan_description,
+    careplans.REASONDESCRIPTION AS careplan_reason,
     
     CASE
-        WHEN b_devices.encounter_id IS NOT NULL
+        WHEN devices.ENCOUNTER IS NOT NULL
         THEN 1
         ELSE 0
     END AS used_a_device,
-    DATEDIFF(MINUTE, b_devices.start_date_time, CAST(b_devices.end_date_time AS TIMESTAMP)) AS device_use_duration_mins,
-    b_devices.description AS device_description,
+    DATEDIFF(MINUTE, devices.START, CAST(devices.STOP AS TIMESTAMP)) AS device_use_duration_mins,
+    devices.DESCRIPTION AS device_description,
     
     CASE
-        WHEN b_conditions.encounter_id IS NOT NULL
+        WHEN conditions.ENCOUNTER IS NOT NULL
         THEN 1
         ELSE 0
     END AS had_a_condition,
-    YEAR(b_conditions.start_date) AS condition_onset_year,
-    DATEDIFF(DAY, b_conditions.start_date, b_conditions.end_date) AS condition_duration_days,
-    b_conditions.description AS condition_description,
+    YEAR(conditions.START) AS condition_onset_year,
+    DATEDIFF(DAY, conditions.START, conditions.STOP) AS condition_duration_days,
+    conditions.DESCRIPTION AS condition_description,
 
     CASE
-        WHEN b_allergies.encounter_id IS NOT NULL
+        WHEN allergies.ENCOUNTER IS NOT NULL
         THEN 1
         ELSE 0
     END AS had_an_allergy,
-    YEAR(b_allergies.start_date) AS allergy_onset_year,
-    DATEDIFF(YEAR, b_allergies.start_date, b_allergies.end_date) AS allergy_duration_years,
-    b_allergies.description AS allergy_description,
+    YEAR(allergies.START) AS allergy_onset_year,
+    DATEDIFF(YEAR, allergies.START, allergies.STOP) AS allergy_duration_years,
+    allergies.DESCRIPTION AS allergy_description,
 
     CASE
-        WHEN b_procedures.encounter_id IS NOT NULL
+        WHEN procedures.ENCOUNTER IS NOT NULL
         THEN 1
         ELSE 0
     END AS had_a_procedure,
-    b_procedures.description AS procedure_description,
-    b_procedures.base_cost AS procedure_base_cost,
-    b_procedures.reason_description AS procedure_reason
+    procedures.DATE AS procedure_date_time,
+    procedures.DESCRIPTION AS procedure_description,
+    procedures.BASE_COST AS procedure_base_cost,
+    procedures.REASONDESCRIPTION AS procedure_reason
 
-FROM {{ ref('b_encounters') }}
+FROM {{ source('bronze', 'encounters') }}
 
-LEFT JOIN {{ ref('b_careplans') }}
-    ON b_encounters.id = b_careplans.encounter_id
-    AND b_encounters.patient_id = b_careplans.patient_id
+LEFT JOIN {{ source('bronze', 'careplans') }}
+    ON encounters.Id = careplans.ENCOUNTER
+    AND encounters.PATIENT = careplans.PATIENT
 
-LEFT JOIN {{ ref('b_devices') }}
-    ON b_encounters.id = b_devices.encounter_id
-    AND b_encounters.patient_id = b_devices.patient_id
+LEFT JOIN {{ source('bronze', 'devices') }}
+    ON encounters.Id = devices.ENCOUNTER
+    AND encounters.PATIENT = devices.PATIENT
 
-LEFT JOIN {{ ref('b_conditions') }}
-    ON b_encounters.id = b_conditions.encounter_id
-    AND b_encounters.patient_id = b_conditions.patient_id
+LEFT JOIN {{ source('bronze', 'conditions') }}
+    ON encounters.Id = conditions.ENCOUNTER
+    AND encounters.PATIENT = conditions.PATIENT
 
-LEFT JOIN {{ ref('b_allergies') }}
-    ON b_encounters.id = b_allergies.encounter_id
-    AND b_encounters.patient_id = b_allergies.patient_id
+LEFT JOIN {{ source('bronze', 'allergies') }}
+    ON encounters.Id = allergies.ENCOUNTER
+    AND encounters.PATIENT = allergies.PATIENT
 
-LEFT JOIN {{ ref('b_procedures') }}
-    ON b_encounters.id = b_procedures.encounter_id
-    AND b_encounters.patient_id = b_procedures.patient_id
+LEFT JOIN {{ source('bronze', 'procedures') }}
+    ON encounters.Id = procedures.ENCOUNTER
+    AND encounters.PATIENT = procedures.PATIENT
