@@ -11,5 +11,5 @@ SELECT
     DISPENSES AS dispenses,
     TOTALCOST AS total_cost,
     REASONCODE AS reason_code,
-    REASONDESCRIPTION AS reason_description
+    REASONDESCRIPTION AS reason
 FROM {{ source('synthea_ehr', 'medications') }}

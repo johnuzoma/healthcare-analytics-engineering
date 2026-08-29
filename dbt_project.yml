@@ -50,6 +50,10 @@ models:
     3_gold:
       +materialized: table
       +schema: 3_gold
+      +tblproperties:
+        'delta.columnMapping.mode': 'name'
+        'delta.minReaderVersion': '2'
+        'delta.minWriterVersion': '5'
 
 flags:
   use_managed_iceberg: true
