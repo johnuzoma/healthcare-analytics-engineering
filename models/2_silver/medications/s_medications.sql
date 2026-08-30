@@ -13,6 +13,7 @@ WITH transformed_meds AS (
         PAYER_COVERAGE AS payer_coverage,
         DISPENSES AS dispenses,
         TOTALCOST AS total_cost,
+        TOTALCOST / DISPENSES AS cost_per_dispenses,
         REASONCODE AS reason_code,
         REASONDESCRIPTION AS reason,
 

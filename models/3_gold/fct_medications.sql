@@ -11,6 +11,7 @@ SELECT
   payer_coverage,
   dispenses,
   total_cost,
+  cost_per_dispenses,
   reason,
   days_since_last_fill_ended,
   encounter_class,
