@@ -1,7 +1,9 @@
 WITH transformed_meds AS (
     SELECT
+        START AS med_start_date_time,
         CAST(START AS DATE) AS med_start_date,
         DATE_FORMAT(START, 'HH:mm:ss') AS med_start_time,
+        STOP AS med_end_date_time,
         CAST(STOP AS DATE) AS med_end_date,
         DATE_FORMAT(STOP, 'HH:mm:ss') AS med_end_time,
         PATIENT AS patient_id,
@@ -13,7 +15,6 @@ WITH transformed_meds AS (
         PAYER_COVERAGE AS payer_coverage,
         DISPENSES AS dispenses,
         TOTALCOST AS total_cost,
-        TOTALCOST / DISPENSES AS cost_per_dispenses,
         REASONCODE AS reason_code,
         REASONDESCRIPTION AS reason,
 
@@ -30,7 +31,8 @@ WITH transformed_meds AS (
             WHEN ROW_NUMBER() OVER (PARTITION BY PATIENT, CODE ORDER BY START) > 1 THEN 'Refill' 
             ELSE 'Initial' 
         END AS fill_type
-    FROM {{ source('bronze', 'medications') }}    
+    FROM {{ source('bronze', 'medications') }}
+    WHERE START <= STOP
 ),
 
 encounters AS (

@@ -1,18 +1,132 @@
+version: 2
+
 models:
   - name: s_medications
+    description: "Silver medications table"
     columns:
-      - name: patient_id
+      - name: med_start_date_time
+        data_type: timestamp_ltz
         data_tests:
-          - not_null:
-              config:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "med_start_date_time <= med_end_date_time"
+              config: 
                 store_failures: true
+
       - name: med_start_date
+        data_type: date
+        
+
+      - name: med_start_time
+        data_type: string
+        
+      - name: med_end_date_time
+        data_type: timestamp_ltz
+
+      - name: med_end_date
+        data_type: date
+        
+
+      - name: med_end_time
+        data_type: string
+        
+
+      - name: patient_id
+        data_type: string
         data_tests:
-          - not_null:
-              config:
-                store_failures: true
+          - relationships:
+              arguments:
+                to: ref('s_patients')
+                field: id
+
+      - name: payer_id
+        data_type: string
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('s_payers')
+                field: id
+
       - name: encounter_id
+        data_type: string
+        
+
+      - name: code
+        data_type: bigint
+        
+
+      - name: med_description
+        data_type: string
+        
+
+      - name: base_cost
+        data_type: double
+        
+
+      - name: payer_coverage
+        data_type: double
+        
+
+      - name: dispenses
+        data_type: bigint
+        
+
+      - name: total_cost
+        data_type: double
+        
+
+      - name: reason_code
+        data_type: bigint
+        
+
+      - name: reason
+        data_type: string
+        
+
+      - name: days_since_last_fill_ended
+        data_type: bigint
+        
+
+      - name: days_supply
+        data_type: bigint
+        
+
+      - name: med_status
+        data_type: string
+        
+
+      - name: fill_type
+        data_type: string
+        
+
+      - name: encounter_class
+        data_type: string
+        
+
+      - name: patient_responsibility
+        data_type: double
+        
+
+      - name: coverage_ratio
+        data_type: double
+        
+
+      - name: avg_cost_per_drug
+        data_type: double
+        
+
+      - name: stddev_cost_per_drug
+        data_type: double
+        
+
+      - name: adherence_flag
+        data_type: string
         data_tests:
-          - not_null:
-              config:
-                store_failures: true
+          - accepted_values:
+              arguments:
+                values: ['Gap', 'Overlap', 'Continuous']
+
+      - name: cost_outlier_flag
+        data_type: string
+        
