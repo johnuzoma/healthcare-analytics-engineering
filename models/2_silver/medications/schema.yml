@@ -10,7 +10,7 @@ models:
           - not_null
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "med_start_date_time <= med_end_date_time"
+                expression: "<= med_end_date_time"
               config: 
                 store_failures: true
 
@@ -125,7 +125,7 @@ models:
         data_tests:
           - accepted_values:
               arguments:
-                values: ['Gap', 'Overlap', 'Continuous']
+                values: ['Gap', 'Overlap', 'Continuous', 'NA']
 
       - name: cost_outlier_flag
         data_type: string

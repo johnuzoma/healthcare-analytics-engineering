@@ -10,7 +10,7 @@ WITH transformed_meds AS (
         PAYER AS payer_id,
         ENCOUNTER AS encounter_id,
         CODE AS code,
-        DESCRIPTION AS med_description,
+        INITCAP(DESCRIPTION) AS med_description,
         BASE_COST AS base_cost,
         PAYER_COVERAGE AS payer_coverage,
         DISPENSES AS dispenses,
@@ -66,12 +66,13 @@ final_enhancements AS (
         CASE
             WHEN days_since_last_fill_ended > 0 THEN 'Gap'
             WHEN days_since_last_fill_ended < 0 THEN 'Overlap'
-            ELSE 'Continuous'
+            WHEN days_since_last_fill_ended = 0 THEN 'Continuous'
+            ELSE 'NA'
         END AS adherence_flag,
         CASE
             WHEN stddev_cost_per_drug = 0 THEN 'No Variance'
-            WHEN (total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) > 2 THEN 'High Cost Outlier' -- cost is more than 2 standard deviations above the drug's average
-            WHEN (total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) < -2 THEN 'Low Cost Outlier' -- cost is more than 2 standard deviations below the drug's average
+            WHEN (total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) > 2 THEN 'High' -- cost is more than 2 standard deviations above the drug's average
+            WHEN (total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) < -2 THEN 'Low' -- cost is more than 2 standard deviations below the drug's average
             ELSE 'Normal'
         END AS cost_outlier_flag
     FROM enhancements
