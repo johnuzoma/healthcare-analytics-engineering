@@ -1,84 +1,135 @@
+WITH allergies AS (
+    SELECT
+        ENCOUNTER,
+        PATIENT,
+        COUNT(*) AS number_of_allergies
+    FROM {{ source('bronze', 'allergies') }}
+    GROUP BY ENCOUNTER, PATIENT
+),
+
+careplans AS (
+    SELECT
+        ENCOUNTER,
+        PATIENT,
+        COUNT(*) AS number_of_careplans
+    FROM {{ source('bronze', 'careplans') }}
+    GROUP BY ENCOUNTER, PATIENT
+),
+
+conditions AS (
+    SELECT
+        ENCOUNTER,
+        PATIENT,
+        COUNT(*) AS number_of_conditions
+    FROM {{ source('bronze', 'conditions') }}
+    GROUP BY ENCOUNTER, PATIENT
+),
+
+immunizations AS (
+    SELECT
+        ENCOUNTER,
+        PATIENT,
+        COUNT(*) AS number_of_immunizations,
+        SUM(BASE_COST) AS total_cost_of_immunizations
+    FROM {{ source('bronze', 'immunizations') }}
+    GROUP BY ENCOUNTER, PATIENT
+),
+
+procedures AS (
+    SELECT
+        ENCOUNTER,
+        PATIENT,
+        COUNT(*) AS number_of_procedures,
+        SUM(BASE_COST) AS total_cost_of_procedures
+    FROM {{ source('bronze', 'procedures') }}
+    GROUP BY ENCOUNTER, PATIENT
+)
+
 SELECT
-    encounters.Id AS visit_id,
-    CAST(encounters.START AS DATE) AS visit_start_date,
-    DATE_FORMAT(encounters.START, 'HH:mm:ss') AS visit_start_time,
-    CAST(encounters.STOP AS DATE) AS visit_end_date,
-    DATE_FORMAT(encounters.STOP, 'HH:mm:ss') AS visit_end_time,
+    encounters.Id AS encounter_id,
+    CAST(encounters.START AS DATE) AS encounter_start_date,
+    DATE_FORMAT(encounters.START, 'HH:mm:ss') AS encounter_start_time,
+    CAST(encounters.STOP AS DATE) AS encounter_end_date,
+    DATE_FORMAT(encounters.STOP, 'HH:mm:ss') AS encounter_end_time,
     encounters.PATIENT AS patient_Id,
-    DATEDIFF(DAY, encounters.START, encounters.STOP) AS length_of_stay,
+    DATEDIFF(MINUTE, encounters.START, COALESCE(encounters.STOP, CURRENT_DATE())) AS length_of_stay_mins,
+    DATEDIFF(DAY, encounters.START, COALESCE(encounters.STOP, CURRENT_DATE())) AS length_of_stay_days,
     encounters.ORGANIZATION AS organization_id,
     encounters.PROVIDER AS provider_id,
     encounters.PAYER AS payer_id,
     INITCAP(encounters.ENCOUNTERCLASS) AS encounter_class,
-    encounters.DESCRIPTION AS description,
+    {{ remove_unnecessary_whitespace("encounters.DESCRIPTION") }} AS encounter_description,
     encounters.BASE_ENCOUNTER_COST AS base_encounter_cost,
     encounters.TOTAL_CLAIM_COST AS total_claim_cost,
     encounters.PAYER_COVERAGE AS payer_coverage,
-    encounters.REASONDESCRIPTION AS reason,
+    {{ remove_unnecessary_whitespace("encounters.REASONDESCRIPTION") }} AS reason,
     
-    CASE
-        WHEN careplans.ENCOUNTER IS NOT NULL
-        THEN 1
-        ELSE 0
-    END AS had_a_careplan,
-    DATEDIFF(MONTH, careplans.START, careplans.STOP) AS careplan_duration_months,
-    careplans.DESCRIPTION AS careplan_description,
-    careplans.REASONDESCRIPTION AS careplan_reason,
-    
-    CASE
-        WHEN devices.ENCOUNTER IS NOT NULL
-        THEN 1
-        ELSE 0
-    END AS used_a_device,
-    DATEDIFF(MINUTE, devices.START, CAST(devices.STOP AS TIMESTAMP)) AS device_use_duration_mins,
-    devices.DESCRIPTION AS device_description,
-    
-    CASE
-        WHEN conditions.ENCOUNTER IS NOT NULL
-        THEN 1
-        ELSE 0
-    END AS had_a_condition,
-    YEAR(conditions.START) AS condition_onset_year,
-    DATEDIFF(DAY, conditions.START, conditions.STOP) AS condition_duration_days,
-    conditions.DESCRIPTION AS condition_description,
-
     CASE
         WHEN allergies.ENCOUNTER IS NOT NULL
         THEN 1
         ELSE 0
     END AS had_an_allergy,
-    YEAR(allergies.START) AS allergy_onset_year,
-    DATEDIFF(YEAR, allergies.START, allergies.STOP) AS allergy_duration_years,
-    allergies.DESCRIPTION AS allergy_description,
+    allergies.number_of_allergies,
+
+    CASE
+        WHEN careplans.ENCOUNTER IS NOT NULL
+        THEN 1
+        ELSE 0
+    END AS had_a_careplan,
+    careplans.number_of_careplans,
+
+    CASE
+        WHEN conditions.ENCOUNTER IS NOT NULL
+        THEN 1
+        ELSE 0
+    END AS had_a_condition,
+    conditions.number_of_conditions,
+
+    CASE
+        WHEN devices.ENCOUNTER IS NOT NULL
+        THEN 1
+        ELSE 0
+    END AS used_a_device,
+    {{ remove_unnecessary_whitespace("REPLACE(devices.DESCRIPTION, ' (physical object)', '')") }} AS device_name,
+
+    CASE
+        WHEN immunizations.ENCOUNTER IS NOT NULL
+        THEN 1
+        ELSE 0
+    END AS had_an_immunization,
+    immunizations.number_of_immunizations,
+    immunizations.total_cost_of_immunizations,
 
     CASE
         WHEN procedures.ENCOUNTER IS NOT NULL
         THEN 1
         ELSE 0
     END AS had_a_procedure,
-    procedures.DATE AS procedure_date_time,
-    procedures.DESCRIPTION AS procedure_description,
-    procedures.BASE_COST AS procedure_base_cost,
-    procedures.REASONDESCRIPTION AS procedure_reason
+    procedures.number_of_procedures,
+    procedures.total_cost_of_procedures
 
 FROM {{ source('bronze', 'encounters') }}
 
-LEFT JOIN {{ source('bronze', 'careplans') }}
+LEFT JOIN allergies
+    ON encounters.Id = allergies.ENCOUNTER
+    AND encounters.PATIENT = allergies.PATIENT
+
+LEFT JOIN careplans
     ON encounters.Id = careplans.ENCOUNTER
     AND encounters.PATIENT = careplans.PATIENT
+
+LEFT JOIN conditions
+    ON encounters.Id = conditions.ENCOUNTER
+    AND encounters.PATIENT = conditions.PATIENT
 
 LEFT JOIN {{ source('bronze', 'devices') }}
     ON encounters.Id = devices.ENCOUNTER
     AND encounters.PATIENT = devices.PATIENT
 
-LEFT JOIN {{ source('bronze', 'conditions') }}
-    ON encounters.Id = conditions.ENCOUNTER
-    AND encounters.PATIENT = conditions.PATIENT
+LEFT JOIN immunizations
+    ON encounters.Id = immunizations.ENCOUNTER
+    AND encounters.PATIENT = immunizations.PATIENT
 
-LEFT JOIN {{ source('bronze', 'allergies') }}
-    ON encounters.Id = allergies.ENCOUNTER
-    AND encounters.PATIENT = allergies.PATIENT
-
-LEFT JOIN {{ source('bronze', 'procedures') }}
+LEFT JOIN procedures
     ON encounters.Id = procedures.ENCOUNTER
     AND encounters.PATIENT = procedures.PATIENT
