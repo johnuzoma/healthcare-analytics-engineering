@@ -1,0 +1,257 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: ""
+    columns:
+      - name: date
+        data_type: timestamp_ltz
+        description: ""
+
+      - name: year
+        data_type: int
+        description: ""
+
+      - name: quarter_year
+        data_type: string
+        description: ""
+
+      - name: month_year
+        data_type: string
+        description: ""
+
+      - name: week_year
+        data_type: string
+        description: ""
+
+      - name: year_quarter_number
+        data_type: int
+        description: ""
+
+      - name: year_month_number
+        data_type: int
+        description: ""
+
+      - name: year_week_number
+        data_type: int
+        description: ""
+
+      - name: is_weekend
+        data_type: int
+        description: ""
+
+      - name: is_future
+        data_type: int
+        description: ""
+
+  - name: dim_organizations
+    description: ""
+    columns:
+      - name: id
+        data_type: string
+        description: ""
+
+      - name: org_name
+        data_type: string
+        description: ""
+
+      - name: org_address
+        data_type: string
+        description: ""
+
+      - name: city
+        data_type: string
+        description: ""
+
+      - name: org_state
+        data_type: string
+        description: ""
+
+      - name: zip
+        data_type: string
+        description: ""
+
+      - name: lat
+        data_type: double
+        description: ""
+
+      - name: lon
+        data_type: double
+        description: ""
+
+      - name: phone
+        data_type: string
+        description: ""
+
+      - name: revenue
+        data_type: double
+        description: ""
+
+      - name: utilization
+        data_type: bigint
+        description: ""
+
+  - name: dim_providers
+    description: ""
+    columns:
+      - name: id
+        data_type: string
+        description: ""
+
+      - name: organization_id
+        data_type: string
+        description: ""
+
+      - name: provider_name
+        data_type: string
+        description: ""
+
+      - name: gender
+        data_type: string
+        description: ""
+
+      - name: specialty
+        data_type: string
+        description: ""
+
+      - name: provider_address
+        data_type: string
+        description: ""
+
+      - name: city
+        data_type: string
+        description: ""
+
+      - name: provider_state
+        data_type: string
+        description: ""
+
+      - name: zip
+        data_type: string
+        description: ""
+
+      - name: lat
+        data_type: double
+        description: ""
+
+      - name: lon
+        data_type: double
+        description: ""
+
+      - name: utilization
+        data_type: bigint
+        description: ""
+
+  - name: dim_patients
+    description: ""
+    columns:
+      - name: id
+        data_type: string
+        description: ""
+
+      - name: is_alive
+        data_type: string
+        description: ""
+
+      - name: age
+        data_type: bigint
+        description: ""
+
+      - name: age_band
+        data_type: string
+        description: ""
+
+      - name: years_since_death
+        data_type: bigint
+        description: ""
+
+      - name: marital_status
+        data_type: string
+        description: ""
+
+      - name: race
+        data_type: string
+        description: ""
+
+      - name: ethnicity
+        data_type: string
+        description: ""
+
+      - name: gender
+        data_type: string
+        description: ""
+
+      - name: patient_state
+        data_type: string
+        description: ""
+
+  - name: dim_payers
+    description: ""
+    columns:
+      - name: id
+        data_type: string
+        description: ""
+
+      - name: payer_name
+        data_type: string
+        description: ""
+
+      - name: city
+        data_type: string
+        description: ""
+
+      - name: amount_covered
+        data_type: double
+        description: ""
+
+      - name: amount_uncovered
+        data_type: double
+        description: ""
+
+      - name: revenue
+        data_type: double
+        description: ""
+
+      - name: covered_encounters
+        data_type: bigint
+        description: ""
+
+      - name: uncovered_encounters
+        data_type: bigint
+        description: ""
+
+      - name: covered_medications
+        data_type: bigint
+        description: ""
+
+      - name: uncovered_medications
+        data_type: bigint
+        description: ""
+
+      - name: covered_procedures
+        data_type: bigint
+        description: ""
+
+      - name: uncovered_procedures
+        data_type: bigint
+        description: ""
+
+      - name: covered_immunizations
+        data_type: bigint
+        description: ""
+
+      - name: uncovered_immunizations
+        data_type: bigint
+        description: ""
+
+      - name: unique_customers
+        data_type: bigint
+        description: ""
+
+      - name: avg_qols
+        data_type: double
+        description: ""
+
+      - name: member_months
+        data_type: bigint
+        description: ""

@@ -1,0 +1,170 @@
+version: 2
+
+models:
+  - name: s_encounters
+    
+    columns:
+      - name: encounter_id
+        data_type: string
+        data_tests:
+          - unique
+          - not_null
+
+      - name: encounter_start_date
+        data_type: date
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "<= encounter_end_date"
+              config: 
+                store_failures: true
+
+      - name: encounter_start_time
+        data_type: string
+        data_tests:
+          - not_null
+
+      - name: encounter_end_date
+        data_type: date
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= encounter_start_date"
+              config: 
+                store_failures: true
+
+      - name: encounter_end_time
+        data_type: string
+
+      - name: patient_id
+        data_type: string
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('s_patients')
+                field: id
+
+      - name: length_of_stay_mins
+        data_type: bigint
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+              config: 
+                store_failures: true
+        
+      - name: length_of_stay_days
+        data_type: bigint
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+              config: 
+                store_failures: true
+        
+      - name: organization_id
+        data_type: string
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('s_organizations')
+                field: id
+        
+      - name: provider_id
+        data_type: string
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('s_providers')
+                field: id
+        
+      - name: payer_id
+        data_type: string
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('s_payers')
+                field: id
+        
+      - name: encounter_class
+        data_type: string
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Ambulatory', 'Wellness', 'Outpatient', 'Urgentcare', 'Emergency', 'Inpatient']
+        
+      - name: encounter_description
+        data_type: string
+        
+      - name: base_encounter_cost
+        data_type: double
+        
+      - name: total_claim_cost
+        data_type: double
+        
+      - name: payer_coverage
+        data_type: double
+        
+      - name: reason
+        data_type: string
+        
+      - name: had_an_allergy
+        data_type: int
+        
+      - name: number_of_allergies
+        data_type: bigint
+        
+      - name: had_a_careplan
+        data_type: int
+        
+      - name: number_of_careplans
+        data_type: bigint
+        
+      - name: had_a_condition
+        data_type: int
+        
+      - name: number_of_conditions
+        data_type: bigint
+        
+      - name: used_a_device
+        data_type: int
+        
+      - name: device_name
+        data_type: string
+        
+      - name: had_an_immunization
+        data_type: int
+        
+      - name: number_of_immunizations
+        data_type: bigint
+        
+      - name: total_cost_of_immunizations
+        data_type: double
+        
+      - name: had_a_procedure
+        data_type: int
+        
+      - name: number_of_procedures
+        data_type: bigint
+        
+      - name: total_cost_of_procedures
+        data_type: double
+
+      - name: admitted_within_10d
+        data_type: int
+
+      - name: admitted_within_10d_description
+        data_type: string
+
+      - name: admitted_within_10d_reason
+        data_type: string
+
+      - name: admitted_within_10d_start_date
+        data_type: date
+
+      - name: admitted_within_10d_start_time
+        data_type: string

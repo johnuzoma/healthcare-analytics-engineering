@@ -1,0 +1,249 @@
+version: 2
+
+models:
+  - name: fct_encounters
+    description: |
+      The table captures encounter data related to patients within the healthcare system. 
+      It includes details such as the patient ID, encounter date, specific codes, and descriptions 
+      related to the nature of the encounter and the reasons for it. This table can be useful for 
+      analyzing patient interactions, tracking health outcomes, and conducting research on encounter patterns.
+    columns:
+      - name: encounter_id
+        data_type: string
+        description: ""
+
+      - name: encounter_start_date
+        data_type: date
+        description: ""
+
+      - name: encounter_start_time
+        data_type: string
+        description: ""
+
+      - name: encounter_end_date
+        data_type: date
+        description: ""
+
+      - name: encounter_end_time
+        data_type: string
+        description: ""
+
+      - name: patient_id
+        data_type: string
+        description: ""
+
+      - name: length_of_stay_mins
+        data_type: bigint
+        description: ""
+
+      - name: length_of_stay_days
+        data_type: bigint
+        description: ""
+
+      - name: organization_id
+        data_type: string
+        description: ""
+
+      - name: provider_id
+        data_type: string
+        description: ""
+
+      - name: payer_id
+        data_type: string
+        description: ""
+
+      - name: encounter_class
+        data_type: string
+        description: ""
+
+      - name: encounter_description
+        data_type: string
+        description: ""
+
+      - name: base_encounter_cost
+        data_type: double
+        description: ""
+
+      - name: total_claim_cost
+        data_type: double
+        description: ""
+
+      - name: payer_coverage
+        data_type: double
+        description: ""
+
+      - name: reason
+        data_type: string
+        description: ""
+
+      - name: had_an_allergy
+        data_type: int
+        description: ""
+
+      - name: number_of_allergies
+        data_type: bigint
+        description: ""
+
+      - name: had_a_careplan
+        data_type: int
+        description: ""
+
+      - name: number_of_careplans
+        data_type: bigint
+        description: ""
+
+      - name: had_a_condition
+        data_type: int
+        description: ""
+
+      - name: number_of_conditions
+        data_type: bigint
+        description: ""
+
+      - name: used_a_device
+        data_type: int
+        description: ""
+
+      - name: device_name
+        data_type: string
+        description: ""
+
+      - name: had_an_immunization
+        data_type: int
+        description: ""
+
+      - name: number_of_immunizations
+        data_type: bigint
+        description: ""
+
+      - name: total_cost_of_immunizations
+        data_type: double
+        description: ""
+
+      - name: had_a_procedure
+        data_type: int
+        description: ""
+
+      - name: number_of_procedures
+        data_type: bigint
+        description: ""
+
+      - name: total_cost_of_procedures
+        data_type: double
+        description: ""
+
+      - name: admitted_within_10d
+        data_type: int
+        description: ""
+
+      - name: admitted_within_10d_description
+        data_type: string
+        description: ""
+
+      - name: admitted_within_10d_reason
+        data_type: string
+        description: ""
+
+      - name: admitted_within_10d_start_date
+        data_type: date
+        description: ""
+
+      - name: admitted_within_10d_start_time
+        data_type: string
+        description: ""
+
+  - name: fct_medications
+    description: |
+      The table contains data related to medications prescribed to patients. 
+      It includes information such as the start and stop dates of medication, 
+      patient identifiers, and descriptions of the medications. 
+      This data can be used for tracking medication usage, analyzing treatment plans, 
+      and understanding patient encounters related to medication management."
+    columns:
+      - name: med_start_date
+        data_type: date
+        description: ""
+
+      - name: med_start_time
+        data_type: string
+        description: ""
+
+      - name: med_end_date
+        data_type: date
+        description: ""
+
+      - name: med_end_time
+        data_type: string
+        description: ""
+
+      - name: patient_id
+        data_type: string
+        description: ""
+
+      - name: payer_id
+        data_type: string
+        description: ""
+
+      - name: encounter_id
+        data_type: string
+        description: ""
+
+      - name: med_description
+        data_type: string
+        description: ""
+
+      - name: base_cost
+        data_type: double
+        description: ""
+
+      - name: payer_coverage
+        data_type: double
+        description: ""
+
+      - name: dispenses
+        data_type: bigint
+        description: ""
+
+      - name: total_cost
+        data_type: double
+        description: ""
+
+      - name: reason
+        data_type: string
+        description: ""
+
+      - name: days_since_last_fill_ended
+        data_type: bigint
+        description: ""
+
+      - name: encounter_class
+        data_type: string
+        description: ""
+
+      - name: patient_responsibility
+        data_type: double
+        description: ""
+
+      - name: coverage_ratio
+        data_type: double
+        description: ""
+
+      - name: days_supply
+        data_type: bigint
+        description: ""
+
+      - name: med_status
+        data_type: string
+        description: ""
+
+      - name: fill_type
+        data_type: string
+        description: ""
+
+      - name: adherence_flag
+        data_type: string
+        description: ""
+
+      - name: cost_outlier_flag
+        data_type: string
+        description: ""

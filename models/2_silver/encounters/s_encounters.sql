@@ -1,81 +1,174 @@
-SELECT
-    b_encounters.id,
-    b_encounters.start_date_time,
-    b_encounters.end_date_time,
-    b_encounters.patient_id,
-    DATEDIFF(DAY, b_encounters.start_date_time, b_encounters.end_date_time) AS length_of_stay,
-    b_encounters.organization_id,
-    b_encounters.provider_id,
-    b_encounters.payer_id,
-    b_encounters.encounter_class,
-    b_encounters.description,
-    b_encounters.base_encounter_cost,
-    b_encounters.total_claim_cost,
-    b_encounters.payer_coverage,
-    b_encounters.reason_description,
-    
-    CASE
-        WHEN b_careplans.encounter_id IS NOT NULL
-        THEN 1
-        ELSE 0
-    END AS had_a_careplan,
-    DATEDIFF(MONTH, b_careplans.start_date, b_careplans.end_date) AS careplan_duration_months,
-    b_careplans.description AS careplan_description,
-    b_careplans.reason_description AS careplan_reason,
-    
-    CASE
-        WHEN b_devices.encounter_id IS NOT NULL
-        THEN 1
-        ELSE 0
-    END AS used_a_device,
-    DATEDIFF(MINUTE, b_devices.start_date_time, CAST(b_devices.end_date_time AS TIMESTAMP)) AS device_use_duration_mins,
-    b_devices.description AS device_description,
-    
-    CASE
-        WHEN b_conditions.encounter_id IS NOT NULL
-        THEN 1
-        ELSE 0
-    END AS had_a_condition,
-    YEAR(b_conditions.start_date) AS condition_onset_year,
-    DATEDIFF(DAY, b_conditions.start_date, b_conditions.end_date) AS condition_duration_days,
-    b_conditions.description AS condition_description,
+WITH allergies AS (
+    SELECT
+        ENCOUNTER,
+        PATIENT,
+        COUNT(*) AS number_of_allergies
+    FROM {{ source('bronze', 'allergies') }}
+    GROUP BY ENCOUNTER, PATIENT
+),
 
+careplans AS (
+    SELECT
+        ENCOUNTER,
+        PATIENT,
+        COUNT(*) AS number_of_careplans
+    FROM {{ source('bronze', 'careplans') }}
+    GROUP BY ENCOUNTER, PATIENT
+),
+
+conditions AS (
+    SELECT
+        ENCOUNTER,
+        PATIENT,
+        COUNT(*) AS number_of_conditions
+    FROM {{ source('bronze', 'conditions') }}
+    GROUP BY ENCOUNTER, PATIENT
+),
+
+immunizations AS (
+    SELECT
+        ENCOUNTER,
+        PATIENT,
+        COUNT(*) AS number_of_immunizations,
+        SUM(BASE_COST) AS total_cost_of_immunizations
+    FROM {{ source('bronze', 'immunizations') }}
+    GROUP BY ENCOUNTER, PATIENT
+),
+
+procedures AS (
+    SELECT
+        ENCOUNTER,
+        PATIENT,
+        COUNT(*) AS number_of_procedures,
+        SUM(BASE_COST) AS total_cost_of_procedures
+    FROM {{ source('bronze', 'procedures') }}
+    GROUP BY ENCOUNTER, PATIENT
+),
+
+admissions_within_10d AS (
+    SELECT
+        non_ip_encounters.Id AS non_ip_encounter_id,
+        ip_encounters.DESCRIPTION AS admitted_within_10d_description,
+        ip_encounters.REASONDESCRIPTION AS admitted_within_10d_reason,
+        CAST(ip_encounters.START AS DATE) AS admitted_within_10d_start_date,
+        DATE_FORMAT(ip_encounters.START, 'HH:mm:ss') AS admitted_within_10d_start_time,
+        ROW_NUMBER() OVER (PARTITION BY non_ip_encounters.Id ORDER BY ip_encounters.START) AS row_num
+    FROM {{ source('bronze', 'encounters') }} AS non_ip_encounters
+    INNER JOIN {{ source('bronze', 'encounters') }} AS ip_encounters
+        ON non_ip_encounters.PATIENT = ip_encounters.PATIENT
+        AND ip_encounters.ENCOUNTERCLASS = 'inpatient'
+        AND non_ip_encounters.ENCOUNTERCLASS <> 'inpatient'
+        AND ip_encounters.Id <> non_ip_encounters.Id
+        AND ip_encounters.START BETWEEN non_ip_encounters.START AND DATEADD(DAY, 10, non_ip_encounters.START)
+)
+
+SELECT
+    -- encounter overview
+    encounters.Id AS encounter_id,
+    CAST(encounters.START AS DATE) AS encounter_start_date,
+    DATE_FORMAT(encounters.START, 'HH:mm:ss') AS encounter_start_time,
+    CAST(encounters.STOP AS DATE) AS encounter_end_date,
+    DATE_FORMAT(encounters.STOP, 'HH:mm:ss') AS encounter_end_time,
+    encounters.PATIENT AS patient_Id,
+    DATEDIFF(MINUTE, encounters.START, COALESCE(encounters.STOP, CURRENT_DATE())) AS length_of_stay_mins,
+    DATEDIFF(DAY, encounters.START, COALESCE(encounters.STOP, CURRENT_DATE())) AS length_of_stay_days,
+    encounters.ORGANIZATION AS organization_id,
+    encounters.PROVIDER AS provider_id,
+    encounters.PAYER AS payer_id,
+    INITCAP(encounters.ENCOUNTERCLASS) AS encounter_class,
+    {{ remove_unnecessary_whitespace("encounters.DESCRIPTION") }} AS encounter_description,
+    encounters.BASE_ENCOUNTER_COST AS base_encounter_cost,
+    encounters.TOTAL_CLAIM_COST AS total_claim_cost,
+    encounters.PAYER_COVERAGE AS payer_coverage,
+    {{ remove_unnecessary_whitespace("encounters.REASONDESCRIPTION") }} AS reason,
+    
+    -- allergies
     CASE
-        WHEN b_allergies.encounter_id IS NOT NULL
+        WHEN allergies.ENCOUNTER IS NOT NULL
         THEN 1
         ELSE 0
     END AS had_an_allergy,
-    YEAR(b_allergies.start_date) AS allergy_onset_year,
-    DATEDIFF(YEAR, b_allergies.start_date, b_allergies.end_date) AS allergy_duration_years,
-    b_allergies.description AS allergy_description,
+    allergies.number_of_allergies,
 
+    -- careplans
     CASE
-        WHEN b_procedures.encounter_id IS NOT NULL
+        WHEN careplans.ENCOUNTER IS NOT NULL
+        THEN 1
+        ELSE 0
+    END AS had_a_careplan,
+    careplans.number_of_careplans,
+
+    -- conditions
+    CASE
+        WHEN conditions.ENCOUNTER IS NOT NULL
+        THEN 1
+        ELSE 0
+    END AS had_a_condition,
+    conditions.number_of_conditions,
+
+    -- devices
+    CASE
+        WHEN devices.ENCOUNTER IS NOT NULL
+        THEN 1
+        ELSE 0
+    END AS used_a_device,
+    {{ remove_unnecessary_whitespace("REPLACE(devices.DESCRIPTION, ' (physical object)', '')") }} AS device_name,
+
+    -- immunizations
+    CASE
+        WHEN immunizations.ENCOUNTER IS NOT NULL
+        THEN 1
+        ELSE 0
+    END AS had_an_immunization,
+    immunizations.number_of_immunizations,
+    immunizations.total_cost_of_immunizations,
+
+    -- procedures
+    CASE
+        WHEN procedures.ENCOUNTER IS NOT NULL
         THEN 1
         ELSE 0
     END AS had_a_procedure,
-    b_procedures.description AS procedure_description,
-    b_procedures.base_cost AS procedure_base_cost,
-    b_procedures.reason_description AS procedure_reason
+    procedures.number_of_procedures,
+    procedures.total_cost_of_procedures,
 
-FROM {{ ref('b_encounters') }}
+    -- admissions within 10 days
+    CASE
+        WHEN encounters.ENCOUNTERCLASS = 'inpatient' THEN NULL
+        WHEN adm.non_ip_encounter_id IS NOT NULL THEN 1
+        ELSE 0
+    END AS admitted_within_10d,
+    adm.admitted_within_10d_description,
+    adm.admitted_within_10d_reason,
+    adm.admitted_within_10d_start_date,
+    adm.admitted_within_10d_start_time
 
-LEFT JOIN {{ ref('b_careplans') }}
-    ON b_encounters.id = b_careplans.encounter_id
-    AND b_encounters.patient_id = b_careplans.patient_id
+FROM {{ source('bronze', 'encounters') }} AS encounters
 
-LEFT JOIN {{ ref('b_devices') }}
-    ON b_encounters.id = b_devices.encounter_id
-    AND b_encounters.patient_id = b_devices.patient_id
+LEFT JOIN allergies
+    ON encounters.Id = allergies.ENCOUNTER
+    AND encounters.PATIENT = allergies.PATIENT
 
-LEFT JOIN {{ ref('b_conditions') }}
-    ON b_encounters.id = b_conditions.encounter_id
-    AND b_encounters.patient_id = b_conditions.patient_id
+LEFT JOIN careplans
+    ON encounters.Id = careplans.ENCOUNTER
+    AND encounters.PATIENT = careplans.PATIENT
 
-LEFT JOIN {{ ref('b_allergies') }}
-    ON b_encounters.id = b_allergies.encounter_id
-    AND b_encounters.patient_id = b_allergies.patient_id
+LEFT JOIN conditions
+    ON encounters.Id = conditions.ENCOUNTER
+    AND encounters.PATIENT = conditions.PATIENT
 
-LEFT JOIN {{ ref('b_procedures') }}
-    ON b_encounters.id = b_procedures.encounter_id
-    AND b_encounters.patient_id = b_procedures.patient_id
+LEFT JOIN {{ source('bronze', 'devices') }} AS devices
+    ON encounters.Id = devices.ENCOUNTER
+    AND encounters.PATIENT = devices.PATIENT
+
+LEFT JOIN immunizations
+    ON encounters.Id = immunizations.ENCOUNTER
+    AND encounters.PATIENT = immunizations.PATIENT
+
+LEFT JOIN procedures
+    ON encounters.Id = procedures.ENCOUNTER
+    AND encounters.PATIENT = procedures.PATIENT
+
+LEFT JOIN admissions_within_10d AS adm
+    ON encounters.Id = adm.non_ip_encounter_id
+    AND adm.row_num = 1
