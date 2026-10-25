@@ -2,7 +2,11 @@ version: 2
 
 models:
   - name: fct_encounters
-    description: ""
+    description: |
+      The table captures encounter data related to patients within the healthcare system. 
+      It includes details such as the patient ID, encounter date, specific codes, and descriptions 
+      related to the nature of the encounter and the reasons for it. This table can be useful for 
+      analyzing patient interactions, tracking health outcomes, and conducting research on encounter patterns.
     columns:
       - name: encounter_id
         data_type: string
@@ -128,8 +132,33 @@ models:
         data_type: double
         description: ""
 
+      - name: admitted_within_10d
+        data_type: int
+        description: ""
+
+      - name: admitted_within_10d_description
+        data_type: string
+        description: ""
+
+      - name: admitted_within_10d_reason
+        data_type: string
+        description: ""
+
+      - name: admitted_within_10d_start_date
+        data_type: date
+        description: ""
+
+      - name: admitted_within_10d_start_time
+        data_type: string
+        description: ""
+
   - name: fct_medications
-    description: ""
+    description: |
+      The table contains data related to medications prescribed to patients. 
+      It includes information such as the start and stop dates of medication, 
+      patient identifiers, and descriptions of the medications. 
+      This data can be used for tracking medication usage, analyzing treatment plans, 
+      and understanding patient encounters related to medication management."
     columns:
       - name: med_start_date
         data_type: date

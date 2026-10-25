@@ -1,1 +1,0 @@
-SELECT * FROM {{ ref('s_encounters') }}

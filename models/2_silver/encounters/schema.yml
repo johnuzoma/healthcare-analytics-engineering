@@ -52,7 +52,7 @@ models:
           - not_null
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "< 0"
+                expression: ">= 0"
               config: 
                 store_failures: true
         
@@ -62,7 +62,7 @@ models:
           - not_null
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "< 0"
+                expression: ">= 0"
               config: 
                 store_failures: true
         
@@ -153,3 +153,18 @@ models:
         
       - name: total_cost_of_procedures
         data_type: double
+
+      - name: admitted_within_10d
+        data_type: int
+
+      - name: admitted_within_10d_description
+        data_type: string
+
+      - name: admitted_within_10d_reason
+        data_type: string
+
+      - name: admitted_within_10d_start_date
+        data_type: date
+
+      - name: admitted_within_10d_start_time
+        data_type: string
