@@ -15,7 +15,7 @@ SELECT
     base_encounter_cost,
     total_claim_cost,
     payer_coverage,
-    reason,
+    encounter_reason,
     had_an_allergy,
     number_of_allergies,
     had_a_careplan,

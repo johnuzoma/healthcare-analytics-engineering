@@ -80,7 +80,7 @@ SELECT
     encounters.BASE_ENCOUNTER_COST AS base_encounter_cost,
     encounters.TOTAL_CLAIM_COST AS total_claim_cost,
     encounters.PAYER_COVERAGE AS payer_coverage,
-    {{ remove_unnecessary_whitespace("encounters.REASONDESCRIPTION") }} AS reason,
+    {{ remove_unnecessary_whitespace("encounters.REASONDESCRIPTION") }} AS encounter_reason,
     
     -- allergies
     CASE

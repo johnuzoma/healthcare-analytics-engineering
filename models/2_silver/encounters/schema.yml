@@ -109,7 +109,7 @@ models:
       - name: payer_coverage
         data_type: double
         
-      - name: reason
+      - name: encounter_reason
         data_type: string
         
       - name: had_an_allergy
