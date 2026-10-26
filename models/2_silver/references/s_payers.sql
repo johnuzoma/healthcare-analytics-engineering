@@ -1,6 +1,10 @@
 SELECT
   Id AS id,
-  NAME AS payer_name,
+  CASE NAME
+    WHEN 'NO_INSURANCE' THEN 'No Insurance'
+    WHEN 'UnitedHealthcare' THEN 'United Healthcare'
+    ELSE NAME
+  END AS payer_name,
   ADDRESS AS payer_address,
   CITY AS city,
   STATE_HEADQUARTERED AS state_headquartered,
