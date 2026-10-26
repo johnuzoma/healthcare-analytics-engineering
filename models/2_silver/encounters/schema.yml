@@ -95,7 +95,7 @@ models:
         data_tests:
           - accepted_values:
               arguments:
-                values: ['Ambulatory', 'Wellness', 'Outpatient', 'Urgentcare', 'Emergency', 'Inpatient']
+                values: ['Ambulatory', 'Wellness', 'Outpatient', 'Urgent Care', 'Emergency', 'Inpatient']
         
       - name: encounter_description
         data_type: string
@@ -167,4 +167,7 @@ models:
         data_type: date
 
       - name: admitted_within_10d_start_time
+        data_type: string
+
+      - name: encounter_billing_type
         data_type: string

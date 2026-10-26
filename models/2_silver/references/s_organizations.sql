@@ -1,6 +1,6 @@
 SELECT
     Id AS id,
-    NAME AS org_name,
+    {{ capitalize_value('NAME') }} AS org_name,
     ADDRESS AS org_address,
     CITY AS city,
     STATE AS org_state,

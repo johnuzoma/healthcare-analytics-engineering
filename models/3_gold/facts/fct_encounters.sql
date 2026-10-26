@@ -34,5 +34,6 @@ SELECT
     admitted_within_10d_description,
     admitted_within_10d_reason,
     admitted_within_10d_start_date,
-    admitted_within_10d_start_time
+    admitted_within_10d_start_time,
+    encounter_billing_type
 FROM {{ ref('s_encounters') }}

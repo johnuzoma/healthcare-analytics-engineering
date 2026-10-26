@@ -152,6 +152,10 @@ models:
         data_type: string
         description: ""
 
+      - name: encounter_billing_type
+        data_type: string
+        description: ""
+
   - name: fct_medications
     description: |
       The table contains data related to medications prescribed to patients. 
