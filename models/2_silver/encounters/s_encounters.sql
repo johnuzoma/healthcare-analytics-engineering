@@ -78,15 +78,16 @@ SELECT
     {{ capitalize_value("
         REPLACE(encounters.ENCOUNTERCLASS, 'urgentcare', ('urgent care'))
     ") }} AS encounter_class,
-    {{ replace_with_not_given (
-        remove_unnecessary_whitespace("encounters.DESCRIPTION")
-    ) }} AS encounter_description,
     encounters.BASE_ENCOUNTER_COST AS base_encounter_cost,
     encounters.TOTAL_CLAIM_COST AS total_claim_cost,
     encounters.PAYER_COVERAGE AS payer_coverage,
-    {{ replace_with_not_given (
-        remove_unnecessary_whitespace("encounters.REASONDESCRIPTION")
-    ) }} AS encounter_reason,
+    {{ remove_unnecessary_whitespace("
+        COALESCE(
+            encounters.REASONDESCRIPTION,
+            encounters.DESCRIPTION,
+            'Not Given'
+        )
+    ") }} AS encounter_reason,
     
     -- allergies
     CASE
@@ -118,7 +119,12 @@ SELECT
         THEN 1
         ELSE 0
     END AS used_a_device,
-    {{ remove_unnecessary_whitespace("REPLACE(devices.DESCRIPTION, ' (physical object)', '')") }} AS device_name,
+    {{ remove_unnecessary_whitespace("
+        REPLACE(
+            devices.DESCRIPTION, 
+            ' (physical object)', ''
+        )
+    ") }} AS device_name,
 
     -- immunizations
     CASE
@@ -144,8 +150,12 @@ SELECT
         WHEN adm.non_ip_encounter_id IS NOT NULL THEN 1
         ELSE 0
     END AS admitted_within_10d,
-    adm.admitted_within_10d_description,
-    adm.admitted_within_10d_reason,
+    {{ remove_unnecessary_whitespace("
+        COALESCE(
+            adm.admitted_within_10d_reason, 
+            adm.admitted_within_10d_description
+        )
+    ") }} AS admitted_within_10d_reason,
     adm.admitted_within_10d_start_date,
     adm.admitted_within_10d_start_time,
 

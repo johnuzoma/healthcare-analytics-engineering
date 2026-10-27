@@ -97,9 +97,6 @@ models:
               arguments:
                 values: ['Ambulatory', 'Wellness', 'Outpatient', 'Urgent Care', 'Emergency', 'Inpatient']
         
-      - name: encounter_description
-        data_type: string
-        
       - name: base_encounter_cost
         data_type: double
         
@@ -156,9 +153,6 @@ models:
 
       - name: admitted_within_10d
         data_type: int
-
-      - name: admitted_within_10d_description
-        data_type: string
 
       - name: admitted_within_10d_reason
         data_type: string

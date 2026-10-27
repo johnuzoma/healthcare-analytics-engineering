@@ -56,10 +56,6 @@ models:
         data_type: string
         description: ""
 
-      - name: encounter_description
-        data_type: string
-        description: ""
-
       - name: base_encounter_cost
         data_type: double
         description: ""
@@ -134,10 +130,6 @@ models:
 
       - name: admitted_within_10d
         data_type: int
-        description: ""
-
-      - name: admitted_within_10d_description
-        data_type: string
         description: ""
 
       - name: admitted_within_10d_reason
