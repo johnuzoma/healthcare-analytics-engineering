@@ -75,12 +75,19 @@ SELECT
     encounters.ORGANIZATION AS organization_id,
     encounters.PROVIDER AS provider_id,
     encounters.PAYER AS payer_id,
-    INITCAP(encounters.ENCOUNTERCLASS) AS encounter_class,
-    {{ remove_unnecessary_whitespace("encounters.DESCRIPTION") }} AS encounter_description,
+    {{ capitalize_value("
+        REPLACE(encounters.ENCOUNTERCLASS, 'urgentcare', ('urgent care'))
+    ") }} AS encounter_class,
     encounters.BASE_ENCOUNTER_COST AS base_encounter_cost,
     encounters.TOTAL_CLAIM_COST AS total_claim_cost,
     encounters.PAYER_COVERAGE AS payer_coverage,
-    {{ remove_unnecessary_whitespace("encounters.REASONDESCRIPTION") }} AS reason,
+    {{ remove_unnecessary_whitespace("
+        COALESCE(
+            encounters.REASONDESCRIPTION,
+            encounters.DESCRIPTION,
+            'Not Given'
+        )
+    ") }} AS encounter_reason,
     
     -- allergies
     CASE
@@ -112,7 +119,12 @@ SELECT
         THEN 1
         ELSE 0
     END AS used_a_device,
-    {{ remove_unnecessary_whitespace("REPLACE(devices.DESCRIPTION, ' (physical object)', '')") }} AS device_name,
+    {{ remove_unnecessary_whitespace("
+        REPLACE(
+            devices.DESCRIPTION, 
+            ' (physical object)', ''
+        )
+    ") }} AS device_name,
 
     -- immunizations
     CASE
@@ -138,10 +150,23 @@ SELECT
         WHEN adm.non_ip_encounter_id IS NOT NULL THEN 1
         ELSE 0
     END AS admitted_within_10d,
-    adm.admitted_within_10d_description,
-    adm.admitted_within_10d_reason,
+    {{ remove_unnecessary_whitespace("
+        COALESCE(
+            adm.admitted_within_10d_reason, 
+            adm.admitted_within_10d_description
+        )
+    ") }} AS admitted_within_10d_reason,
     adm.admitted_within_10d_start_date,
-    adm.admitted_within_10d_start_time
+    adm.admitted_within_10d_start_time,
+
+    -- billing types
+    CASE
+        WHEN encounters.PAYER IS NOT NULL 
+            AND encounters.PAYER <> 'b1c428d6-4f07-31e0-90f0-68ffa6ff8c76' -- id for "NO INSURANCE"
+            AND procedures.ENCOUNTER IS NOT NULL
+            THEN 'FPP'
+        ELSE 'Per Diem'
+    END AS encounter_billing_type
 
 FROM {{ source('bronze', 'encounters') }} AS encounters
 

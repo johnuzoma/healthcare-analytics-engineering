@@ -95,10 +95,7 @@ models:
         data_tests:
           - accepted_values:
               arguments:
-                values: ['Ambulatory', 'Wellness', 'Outpatient', 'Urgentcare', 'Emergency', 'Inpatient']
-        
-      - name: encounter_description
-        data_type: string
+                values: ['Ambulatory', 'Wellness', 'Outpatient', 'Urgent Care', 'Emergency', 'Inpatient']
         
       - name: base_encounter_cost
         data_type: double
@@ -109,7 +106,7 @@ models:
       - name: payer_coverage
         data_type: double
         
-      - name: reason
+      - name: encounter_reason
         data_type: string
         
       - name: had_an_allergy
@@ -157,9 +154,6 @@ models:
       - name: admitted_within_10d
         data_type: int
 
-      - name: admitted_within_10d_description
-        data_type: string
-
       - name: admitted_within_10d_reason
         data_type: string
 
@@ -167,4 +161,7 @@ models:
         data_type: date
 
       - name: admitted_within_10d_start_time
+        data_type: string
+
+      - name: encounter_billing_type
         data_type: string

@@ -11,11 +11,10 @@ SELECT
     provider_id,
     payer_id,
     encounter_class,
-    encounter_description,
     base_encounter_cost,
     total_claim_cost,
     payer_coverage,
-    reason,
+    encounter_reason,
     had_an_allergy,
     number_of_allergies,
     had_a_careplan,
@@ -31,8 +30,8 @@ SELECT
     number_of_procedures,
     total_cost_of_procedures,
     admitted_within_10d,
-    admitted_within_10d_description,
     admitted_within_10d_reason,
     admitted_within_10d_start_date,
-    admitted_within_10d_start_time
+    admitted_within_10d_start_time,
+    encounter_billing_type
 FROM {{ ref('s_encounters') }}

@@ -1,9 +1,9 @@
 SELECT
     Id AS id,
     ORGANIZATION AS organization_id,
-    NAME AS provider_name,
+    REGEXP_REPLACE(NAME, '[0-9]+', '') AS provider_name,
     GENDER AS gender,
-    SPECIALITY AS specialty,
+    {{ capitalize_value('SPECIALITY') }} AS specialty,
     ADDRESS AS provider_address,
     CITY AS city,
     STATE AS provider_state,
