@@ -1,0 +1,7 @@
+version: 2
+checks:
+  - name: medallion_layer_dependencies
+    description: "Bronze feeds silver, silver feeds gold. No same-layer or backwards refs."
+    config:
+      severity: error
+      selection_filter_on: child_unique_id

@@ -52,3 +52,6 @@ flags:
   use_managed_iceberg: true
   use_concurrent_microbatch: true
   use_materialization_v2: true
+
+info_schema:
+  version: 1
