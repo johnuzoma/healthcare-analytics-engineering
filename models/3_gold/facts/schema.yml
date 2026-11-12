@@ -129,7 +129,7 @@ models:
         description: ""
 
       - name: admitted_within_10d
-        data_type: int
+        data_type: string
         description: ""
 
       - name: admitted_within_10d_reason

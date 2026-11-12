@@ -152,7 +152,7 @@ models:
         data_type: double
 
       - name: admitted_within_10d
-        data_type: int
+        data_type: string
 
       - name: admitted_within_10d_reason
         data_type: string
@@ -165,3 +165,36 @@ models:
 
       - name: encounter_billing_type
         data_type: string
+
+unit_tests:
+  - name: test_admitted_within_10d
+    model: s_encounters
+    given:
+      - input: source('bronze', 'encounters')
+        rows:
+          - {Id: e1, PATIENT: p1, ENCOUNTERCLASS: ambulatory, START: "2024-01-01 09:00:00"}
+          - {Id: e2, PATIENT: p1, ENCOUNTERCLASS: inpatient,  START: "2024-01-11 09:00:00"}
+          - {Id: e3, PATIENT: p1, ENCOUNTERCLASS: inpatient,  START: "2024-01-03 09:00:00"}
+          - {Id: e4, PATIENT: p2, ENCOUNTERCLASS: ambulatory, START: "2024-01-01 09:00:00"}
+          - {Id: e5, PATIENT: p1, ENCOUNTERCLASS: inpatient,  START: "2024-01-05 09:00:00"}
+          - {Id: e6, PATIENT: p2, ENCOUNTERCLASS: inpatient, START: "2024-01-11 09:00:00"}
+      - input: source('bronze', 'allergies')
+        rows: []
+      - input: source('bronze', 'careplans')
+        rows: []
+      - input: source('bronze', 'conditions')
+        rows: []
+      - input: source('bronze', 'devices')
+        rows: []
+      - input: source('bronze', 'immunizations')
+        rows: []
+      - input: source('bronze', 'procedures')
+        rows: []
+    expect:
+      rows:
+        - {encounter_id: e1, admitted_within_10d: '1', admitted_within_10d_start_date: "2024-01-03"}
+        - {encounter_id: e2, admitted_within_10d: 'NA'}
+        - {encounter_id: e3, admitted_within_10d: 'NA'}
+        - {encounter_id: e4, admitted_within_10d: '1', admitted_within_10d_start_date: "2024-01-11"}
+        - {encounter_id: e5, admitted_within_10d: 'NA'}
+        - {encounter_id: e6, admitted_within_10d: 'NA'}

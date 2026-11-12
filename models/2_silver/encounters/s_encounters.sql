@@ -146,9 +146,9 @@ SELECT
 
     -- admissions within 10 days
     CASE
-        WHEN encounters.ENCOUNTERCLASS = 'inpatient' THEN NULL
-        WHEN adm.non_ip_encounter_id IS NOT NULL THEN 1
-        ELSE 0
+        WHEN encounters.ENCOUNTERCLASS = 'inpatient' THEN 'NA'
+        WHEN adm.non_ip_encounter_id IS NOT NULL THEN '1'
+        ELSE '0'
     END AS admitted_within_10d,
     {{ remove_unnecessary_whitespace("
         COALESCE(
