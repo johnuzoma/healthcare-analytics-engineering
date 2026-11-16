@@ -44,7 +44,7 @@ models:
         data_type: int
         description: ""
 
-  - name: dim_organizations
+  - name: dim_organization
     description: ""
     columns:
       - name: id
@@ -91,7 +91,7 @@ models:
         data_type: bigint
         description: ""
 
-  - name: dim_providers
+  - name: dim_provider
     description: ""
     columns:
       - name: id
@@ -142,7 +142,7 @@ models:
         data_type: bigint
         description: ""
 
-  - name: dim_patients
+  - name: dim_patient
     description: ""
     columns:
       - name: id
@@ -185,7 +185,7 @@ models:
         data_type: string
         description: ""
 
-  - name: dim_payers
+  - name: dim_payer
     description: ""
     columns:
       - name: id

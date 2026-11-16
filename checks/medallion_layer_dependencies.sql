@@ -11,6 +11,7 @@ WITH nodes AS (
     SELECT
         unique_id,
         CASE
+            WHEN schema_name = '1_bronze' THEN 'bronze'
             WHEN schema_name = '2_silver' THEN 'silver'
             WHEN schema_name = '3_gold' THEN 'gold'
         END AS layer
@@ -19,6 +20,7 @@ WITH nodes AS (
 
 allowed (parent_layer, child_layer) AS (
     VALUES
+        ('bronze', 'bronze'),
         ('bronze', 'silver'),
         ('silver', 'gold')
 )

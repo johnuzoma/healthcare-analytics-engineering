@@ -9,13 +9,13 @@ WITH transformed_meds AS (
         PATIENT AS patient_id,
         PAYER AS payer_id,
         ENCOUNTER AS encounter_id,
-        CODE AS code,
+        CAST(CODE AS STRING) AS code,
         INITCAP(DESCRIPTION) AS med_description,
         BASE_COST AS base_cost,
         PAYER_COVERAGE AS payer_coverage,
         DISPENSES AS dispenses,
         TOTALCOST AS total_cost,
-        REASONCODE AS reason_code,
+        CAST(REASONCODE AS STRING) AS reason_code,
         REASONDESCRIPTION AS reason,
 
         DATEDIFF(

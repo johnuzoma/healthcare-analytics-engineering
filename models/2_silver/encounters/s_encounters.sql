@@ -65,10 +65,12 @@ admissions_within_10d AS (
 SELECT
     -- encounter overview
     encounters.Id AS encounter_id,
-    CAST(encounters.START AS DATE) AS encounter_start_date,
-    DATE_FORMAT(encounters.START, 'HH:mm:ss') AS encounter_start_time,
-    CAST(encounters.STOP AS DATE) AS encounter_end_date,
-    DATE_FORMAT(encounters.STOP, 'HH:mm:ss') AS encounter_end_time,
+    encounters.START AS enc_start_date_time,
+    CAST(encounters.START AS DATE) AS enc_start_date,
+    DATE_FORMAT(encounters.START, 'HH:mm:ss') AS enc_start_time,
+    encounters.STOP AS enc_end_date_time,
+    CAST(encounters.STOP AS DATE) AS enc_end_date,
+    DATE_FORMAT(encounters.STOP, 'HH:mm:ss') AS enc_end_time,
     encounters.PATIENT AS patient_Id,
     DATEDIFF(MINUTE, encounters.START, COALESCE(encounters.STOP, CURRENT_DATE())) AS length_of_stay_mins,
     DATEDIFF(DAY, encounters.START, COALESCE(encounters.STOP, CURRENT_DATE())) AS length_of_stay_days,
@@ -81,6 +83,9 @@ SELECT
     encounters.BASE_ENCOUNTER_COST AS base_encounter_cost,
     encounters.TOTAL_CLAIM_COST AS total_claim_cost,
     encounters.PAYER_COVERAGE AS payer_coverage,
+    CAST(encounters.CODE AS STRING) AS code,
+    encounters.DESCRIPTION AS encounter_description,
+    CAST(encounters.REASONCODE AS STRING) AS reason_code,
     {{ remove_unnecessary_whitespace("
         COALESCE(
             encounters.REASONDESCRIPTION,

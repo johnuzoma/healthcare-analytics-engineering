@@ -53,7 +53,7 @@ models:
         
 
       - name: code
-        data_type: bigint
+        data_type: string
         
 
       - name: med_description
@@ -77,7 +77,7 @@ models:
         
 
       - name: reason_code
-        data_type: bigint
+        data_type: string
         
 
       - name: reason

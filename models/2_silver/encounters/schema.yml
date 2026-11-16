@@ -10,32 +10,32 @@ models:
           - unique
           - not_null
 
-      - name: encounter_start_date
+      - name: enc_start_date
         data_type: date
         data_tests:
           - not_null
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "<= encounter_end_date"
+                expression: "<= enc_end_date"
               config: 
                 store_failures: true
 
-      - name: encounter_start_time
+      - name: enc_start_time
         data_type: string
         data_tests:
           - not_null
 
-      - name: encounter_end_date
+      - name: enc_end_date
         data_type: date
         data_tests:
           - not_null
           - dbt_utils.expression_is_true:
               arguments:
-                expression: ">= encounter_start_date"
+                expression: ">= enc_start_date"
               config: 
                 store_failures: true
 
-      - name: encounter_end_time
+      - name: enc_end_time
         data_type: string
 
       - name: patient_id
@@ -105,7 +105,16 @@ models:
         
       - name: payer_coverage
         data_type: double
+
+      - name: code
+        data_type: string
+
+      - name: encounter_description
+        data_type: string
         
+      - name: reason_code
+        data_type: string
+      
       - name: encounter_reason
         data_type: string
         
