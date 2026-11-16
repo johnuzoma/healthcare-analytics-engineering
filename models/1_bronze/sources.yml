@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: bronze
-    database: synthea_ehr
+    database: synthea
     schema: 1_bronze
     config:
       freshness:
