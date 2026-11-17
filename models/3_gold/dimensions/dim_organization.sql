@@ -2,7 +2,7 @@ SELECT
     id,
     org_name,
     org_address,
-    city,
+    org_city,
     org_state,
     zip,
     lat,

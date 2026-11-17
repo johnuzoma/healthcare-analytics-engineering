@@ -1,13 +1,13 @@
 SELECT
-    Id AS id,
-    {{ capitalize_value('NAME') }} AS org_name,
-    ADDRESS AS org_address,
-    CITY AS city,
-    STATE AS org_state,
-    ZIP AS zip,
-    LAT AS lat,
-    LON AS lon,
-    PHONE AS phone,
-    REVENUE AS revenue,
-    UTILIZATION AS utilization
+    id AS id,
+    {{ capitalize_value('name') }} AS org_name,
+    {{ capitalize_value('address') }} AS org_address,
+    {{ capitalize_value('city') }} AS org_city,
+    state AS org_state,
+    zip,
+    lat,
+    lon,
+    phone,
+    revenue,
+    utilization
 FROM {{ source('bronze', 'organizations') }}

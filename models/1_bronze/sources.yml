@@ -10,6 +10,12 @@ sources:
         error_after: {count: 24, period: hour}
       loaded_at_field: loaded_at
     tables:
+      - name: allergies
+      - name: careplans
+      - name: claims
+      - name: claims_transactions
+      - name: conditions
+      - name: devices
       - name: encounters
         columns:
           - name: id
@@ -17,18 +23,14 @@ sources:
             data_tests:
               - unique
               - not_null
-
-      - name: medications
-      - name: allergies
-      - name: careplans
-      - name: conditions
-      - name: devices
       - name: imaging_studies
       - name: immunizations
+      - name: medications
       - name: observations
       - name: organizations
       - name: patients
       - name: payer_transitions
       - name: payers
       - name: procedures
-      - name: providers      
+      - name: providers
+      - name: supplies 

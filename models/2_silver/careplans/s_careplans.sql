@@ -1,11 +1,11 @@
 SELECT
-    Id AS careplan_id,
-    START AS cp_start_date,
-    STOP AS cp_end_date,
-    PATIENT AS patient_id,
-    ENCOUNTER AS encounter_id,
-    CAST(CODE AS STRING) AS code,
-    DESCRIPTION AS cp_description,
-    CAST(REASONCODE AS STRING) AS reason_code,
-    REASONDESCRIPTION AS reason
+    id AS careplan_id,
+    start AS cp_start_date,
+    stop AS cp_end_date,
+    patient AS patient_id,
+    encounter AS encounter_id,
+    CAST(code AS STRING) AS code,
+    description AS cp_description,
+    CAST(reasoncode AS STRING) AS reason_code,
+    reasondescription AS reason
 FROM {{ source('bronze', 'careplans') }}

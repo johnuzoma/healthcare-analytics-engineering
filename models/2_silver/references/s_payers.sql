@@ -1,27 +1,27 @@
 SELECT
-  Id AS id,
-  CASE NAME
-    WHEN 'NO_INSURANCE' THEN 'No Insurance'
-    WHEN 'UnitedHealthcare' THEN 'United Healthcare'
-    ELSE NAME
-  END AS payer_name,
-  ADDRESS AS payer_address,
-  CITY AS city,
-  STATE_HEADQUARTERED AS state_headquartered,
-  ZIP AS zip,
-  PHONE AS phone,
-  AMOUNT_COVERED AS amount_covered,
-  AMOUNT_UNCOVERED AS amount_uncovered,
-  REVENUE AS revenue,
-  COVERED_ENCOUNTERS AS covered_encounters,
-  UNCOVERED_ENCOUNTERS AS uncovered_encounters,
-  COVERED_MEDICATIONS AS covered_medications,
-  UNCOVERED_MEDICATIONS AS uncovered_medications,
-  COVERED_PROCEDURES AS covered_procedures,
-  UNCOVERED_PROCEDURES AS uncovered_procedures,
-  COVERED_IMMUNIZATIONS AS covered_immunizations,
-  UNCOVERED_IMMUNIZATIONS AS uncovered_immunizations,
-  UNIQUE_CUSTOMERS AS unique_customers,
-  QOLS_AVG AS avg_qols,
-  MEMBER_MONTHS AS member_months
+    id,
+    CASE name
+        WHEN 'NO_INSURANCE' THEN 'No Insurance'
+        WHEN 'UnitedHealthcare' THEN 'United Healthcare'
+        ELSE name
+    END AS payer_name,
+    address AS payer_address,
+    city,
+    state_headquartered,
+    zip,
+    phone,
+    amount_covered,
+    amount_uncovered,
+    revenue,
+    covered_encounters,
+    uncovered_encounters,
+    covered_medications,
+    uncovered_medications,
+    covered_procedures,
+    uncovered_procedures,
+    covered_immunizations,
+    uncovered_immunizations,
+    unique_customers,
+    qols_avg AS avg_qols,
+    member_months
 FROM {{ source('bronze', 'payers') }}

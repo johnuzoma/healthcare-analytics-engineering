@@ -1,56 +1,60 @@
 WITH payers AS (
     SELECT
-        Id AS id,
-        NAME AS name
+        id,
+        name
     FROM {{ source('bronze', 'payers') }}
 )
 
 ,payer_transitions AS (
     SELECT
-        PATIENT AS patient_id,
-        START_YEAR AS start_year,
-        END_YEAR AS end_year,
-        (END_YEAR - START_YEAR) AS duration_years,
-        START_YEAR - LAG(END_YEAR) OVER (PARTITION BY PATIENT ORDER BY START_YEAR) AS prior_gap_years,
-        LAG(PAYER) OVER (PARTITION BY PATIENT ORDER BY START_YEAR) AS previous_payer_id,
-        PAYER AS current_payer_id,
-        COALESCE(OWNERSHIP, 'Unknown') AS ownership,
-        ROW_NUMBER() OVER (PARTITION BY PATIENT ORDER BY START_YEAR) - 1 AS switch_sequence
+        patient AS patient_id,
+        memberid AS member_id,
+        start_year AS start_date_time,
+        end_year AS end_date_time,
+        DATEDIFF(MONTH, start_year, end_year) AS duration_months,
+        DATEDIFF(MONTH, start_year, LAG(end_year) OVER (PARTITION BY patient ORDER BY start_year)) AS prior_gap_months,
+        LAG(payer) OVER (PARTITION BY patient ORDER BY start_year) AS previous_payer_id,
+        payer AS current_payer_id,
+        secondary_payer AS secondary_payer_id,
+        {{ replace_nulls('ownership') }} AS ownership,
+        ROW_NUMBER() OVER (PARTITION BY patient ORDER BY start_year) - 1 AS switch_sequence
     FROM {{ source('bronze', 'payer_transitions') }}
 )
 
 SELECT
     -- patient/payer info
-    PT.patient_id,
-    COALESCE(PT.previous_payer_id, 'NO_INSURANCE') AS previous_payer_id,
-    PT.current_payer_id,
+    pt.patient_id,
+    pt.member_id,
+    COALESCE(pt.previous_payer_id, 'NO_INSURANCE') AS previous_payer_id,
+    pt.current_payer_id,
+    pt.secondary_payer_id,
     COALESCE(prev_payer.name, 'NO_INSURANCE') AS previous_payer_name,
-    curr_payer.NAME AS current_payer_name,
-    PT.start_year,
-    PT.end_year,
-    PT.duration_years,
+    curr_payer.name AS current_payer_name,
+    pt.start_date_time,
+    pt.end_date_time,
+    pt.duration_months,
     CASE
-        WHEN PT.prior_gap_years IN (1,0) THEN 0
-        WHEN PT.prior_gap_years > 1 THEN PT.prior_gap_years
-    END AS prior_coverage_gap_years,
+        WHEN pt.prior_gap_months <= 12 THEN 0
+        WHEN pt.prior_gap_months > 12 THEN pt.prior_gap_months
+    END AS prior_coverage_gap_months,
     CASE
-        WHEN curr_payer.name = 'NO_INSURANCE' THEN 'Not Applicable'
-        ELSE PT.ownership
+        WHEN curr_payer.name = 'No Insurance' THEN 'NA'
+        ELSE pt.ownership
     END AS ownership,
 
     -- switch info
     CASE
-        WHEN prev_payer.name IS NULL THEN 0
-        WHEN prev_payer.name IS NOT NULL AND prev_payer.name = curr_payer.name THEN 0
-        WHEN prev_payer.name IS NOT NULL AND prev_payer.name <> curr_payer.name THEN 1
+        WHEN prev_payer.name IS NULL THEN 'N'
+        WHEN prev_payer.name IS NOT NULL AND prev_payer.name = curr_payer.name THEN 'N'
+        WHEN prev_payer.name IS NOT NULL AND prev_payer.name <> curr_payer.name THEN 'Y'
     END AS is_a_switch,
-    PT.switch_sequence,
-    MAX(PT.switch_sequence) OVER (PARTITION BY PT.patient_id) AS no_of_switches
+    pt.switch_sequence,
+    MAX(pt.switch_sequence) OVER (PARTITION BY pt.patient_id) AS no_of_switches
 
-FROM payer_transitions PT
+FROM payer_transitions pt
 
 LEFT JOIN payers prev_payer
-    ON PT.previous_payer_id = prev_payer.id
+    ON pt.previous_payer_id = prev_payer.id
 
 LEFT JOIN payers curr_payer
-    ON PT.current_payer_id = curr_payer.id
+    ON pt.current_payer_id = curr_payer.id

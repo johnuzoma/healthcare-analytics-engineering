@@ -1,140 +1,135 @@
 WITH allergies AS (
     SELECT
-        ENCOUNTER,
-        PATIENT,
+        encounter,
+        patient,
         COUNT(*) AS number_of_allergies
     FROM {{ source('bronze', 'allergies') }}
-    GROUP BY ENCOUNTER, PATIENT
+    GROUP BY encounter, patient
 ),
 
 careplans AS (
     SELECT
-        ENCOUNTER,
-        PATIENT,
+        encounter,
+        patient,
         COUNT(*) AS number_of_careplans
     FROM {{ source('bronze', 'careplans') }}
-    GROUP BY ENCOUNTER, PATIENT
+    GROUP BY encounter, patient
 ),
 
 conditions AS (
     SELECT
-        ENCOUNTER,
-        PATIENT,
+        encounter,
+        patient,
         COUNT(*) AS number_of_conditions
     FROM {{ source('bronze', 'conditions') }}
-    GROUP BY ENCOUNTER, PATIENT
+    GROUP BY encounter, patient
 ),
 
 immunizations AS (
     SELECT
-        ENCOUNTER,
-        PATIENT,
+        encounter,
+        patient,
         COUNT(*) AS number_of_immunizations,
-        SUM(BASE_COST) AS total_cost_of_immunizations
+        SUM(base_cost) AS total_cost_of_immunizations
     FROM {{ source('bronze', 'immunizations') }}
-    GROUP BY ENCOUNTER, PATIENT
+    GROUP BY encounter, patient
 ),
 
 procedures AS (
     SELECT
-        ENCOUNTER,
-        PATIENT,
+        encounter,
+        patient,
         COUNT(*) AS number_of_procedures,
-        SUM(BASE_COST) AS total_cost_of_procedures
+        SUM(base_cost) AS total_cost_of_procedures
     FROM {{ source('bronze', 'procedures') }}
-    GROUP BY ENCOUNTER, PATIENT
+    GROUP BY encounter, patient
 ),
 
 admissions_within_10d AS (
     SELECT
-        non_ip_encounters.Id AS non_ip_encounter_id,
-        ip_encounters.DESCRIPTION AS admitted_within_10d_description,
-        ip_encounters.REASONDESCRIPTION AS admitted_within_10d_reason,
-        CAST(ip_encounters.START AS DATE) AS admitted_within_10d_start_date,
-        DATE_FORMAT(ip_encounters.START, 'HH:mm:ss') AS admitted_within_10d_start_time,
-        ROW_NUMBER() OVER (PARTITION BY non_ip_encounters.Id ORDER BY ip_encounters.START) AS row_num
+        non_ip_encounters.id AS non_ip_encounter_id,
+        ip_encounters.description AS admitted_within_10d_description,
+        ip_encounters.reasondescription AS admitted_within_10d_reason,
+        CAST(ip_encounters.start AS DATE) AS admitted_within_10d_start_date,
+        DATE_FORMAT(ip_encounters.start, 'HH:mm:ss') AS admitted_within_10d_start_time,
+        ROW_NUMBER() OVER (
+            PARTITION BY non_ip_encounters.id
+            ORDER BY ip_encounters.start
+        ) AS row_num
     FROM {{ source('bronze', 'encounters') }} AS non_ip_encounters
     INNER JOIN {{ source('bronze', 'encounters') }} AS ip_encounters
-        ON non_ip_encounters.PATIENT = ip_encounters.PATIENT
-        AND ip_encounters.ENCOUNTERCLASS = 'inpatient'
-        AND non_ip_encounters.ENCOUNTERCLASS <> 'inpatient'
-        AND ip_encounters.Id <> non_ip_encounters.Id
-        AND ip_encounters.START BETWEEN non_ip_encounters.START AND DATEADD(DAY, 10, non_ip_encounters.START)
+        ON non_ip_encounters.patient = ip_encounters.patient
+        AND ip_encounters.encounterclass = 'inpatient'
+        AND non_ip_encounters.encounterclass <> 'inpatient'
+        AND ip_encounters.id <> non_ip_encounters.id
+        AND ip_encounters.start BETWEEN non_ip_encounters.start
+            AND DATEADD(DAY, 10, non_ip_encounters.start)
 )
 
 SELECT
     -- encounter overview
-    encounters.Id AS encounter_id,
-    encounters.START AS enc_start_date_time,
-    CAST(encounters.START AS DATE) AS enc_start_date,
-    DATE_FORMAT(encounters.START, 'HH:mm:ss') AS enc_start_time,
-    encounters.STOP AS enc_end_date_time,
-    CAST(encounters.STOP AS DATE) AS enc_end_date,
-    DATE_FORMAT(encounters.STOP, 'HH:mm:ss') AS enc_end_time,
-    encounters.PATIENT AS patient_Id,
-    DATEDIFF(MINUTE, encounters.START, COALESCE(encounters.STOP, CURRENT_DATE())) AS length_of_stay_mins,
-    DATEDIFF(DAY, encounters.START, COALESCE(encounters.STOP, CURRENT_DATE())) AS length_of_stay_days,
-    encounters.ORGANIZATION AS organization_id,
-    encounters.PROVIDER AS provider_id,
-    encounters.PAYER AS payer_id,
+    encounters.id AS encounter_id,
+    encounters.start AS enc_start_date_time,
+    CAST(encounters.start AS DATE) AS enc_start_date,
+    DATE_FORMAT(encounters.start, 'HH:mm:ss') AS enc_start_time,
+    encounters.stop AS enc_end_date_time,
+    CAST(encounters.stop AS DATE) AS enc_end_date,
+    DATE_FORMAT(encounters.stop, 'HH:mm:ss') AS enc_end_time,
+    encounters.patient AS patient_id,
+    DATEDIFF(
+        MINUTE,
+        encounters.start,
+        COALESCE(encounters.stop, CURRENT_DATE())
+    ) AS length_of_stay_mins,
+    DATEDIFF(
+        DAY,
+        encounters.start,
+        COALESCE(encounters.stop, CURRENT_DATE())
+    ) AS length_of_stay_days,
+    encounters.organization AS organization_id,
+    encounters.provider AS provider_id,
+    encounters.payer AS payer_id,
     {{ capitalize_value("
-        REPLACE(encounters.ENCOUNTERCLASS, 'urgentcare', ('urgent care'))
+        REPLACE(encounters.encounterclass, 'urgentcare', 'urgent care')
     ") }} AS encounter_class,
-    encounters.BASE_ENCOUNTER_COST AS base_encounter_cost,
-    encounters.TOTAL_CLAIM_COST AS total_claim_cost,
-    encounters.PAYER_COVERAGE AS payer_coverage,
-    CAST(encounters.CODE AS STRING) AS code,
-    encounters.DESCRIPTION AS encounter_description,
-    CAST(encounters.REASONCODE AS STRING) AS reason_code,
+    encounters.base_encounter_cost,
+    encounters.total_claim_cost,
+    encounters.payer_coverage,
+    CAST(encounters.code AS STRING) AS code,
+    encounters.description AS encounter_description,
+    CAST(encounters.reasoncode AS STRING) AS reason_code,
     {{ remove_unnecessary_whitespace("
         COALESCE(
-            encounters.REASONDESCRIPTION,
-            encounters.DESCRIPTION,
+            encounters.reasondescription,
+            encounters.description,
             'Not Given'
         )
     ") }} AS encounter_reason,
-    
+
     -- allergies
     CASE
-        WHEN allergies.ENCOUNTER IS NOT NULL
-        THEN 1
+        WHEN allergies.encounter IS NOT NULL THEN 1
         ELSE 0
     END AS had_an_allergy,
     allergies.number_of_allergies,
 
     -- careplans
     CASE
-        WHEN careplans.ENCOUNTER IS NOT NULL
-        THEN 1
+        WHEN careplans.encounter IS NOT NULL THEN 1
         ELSE 0
     END AS had_a_careplan,
     careplans.number_of_careplans,
 
     -- conditions
     CASE
-        WHEN conditions.ENCOUNTER IS NOT NULL
-        THEN 1
+        WHEN conditions.encounter IS NOT NULL THEN 1
         ELSE 0
     END AS had_a_condition,
     conditions.number_of_conditions,
 
-    -- devices
-    CASE
-        WHEN devices.ENCOUNTER IS NOT NULL
-        THEN 1
-        ELSE 0
-    END AS used_a_device,
-    {{ remove_unnecessary_whitespace("
-        REPLACE(
-            devices.DESCRIPTION, 
-            ' (physical object)', ''
-        )
-    ") }} AS device_name,
-
     -- immunizations
     CASE
-        WHEN immunizations.ENCOUNTER IS NOT NULL
-        THEN 1
+        WHEN immunizations.encounter IS NOT NULL THEN 1
         ELSE 0
     END AS had_an_immunization,
     immunizations.number_of_immunizations,
@@ -142,8 +137,7 @@ SELECT
 
     -- procedures
     CASE
-        WHEN procedures.ENCOUNTER IS NOT NULL
-        THEN 1
+        WHEN procedures.encounter IS NOT NULL THEN 1
         ELSE 0
     END AS had_a_procedure,
     procedures.number_of_procedures,
@@ -151,13 +145,13 @@ SELECT
 
     -- admissions within 10 days
     CASE
-        WHEN encounters.ENCOUNTERCLASS = 'inpatient' THEN 'NA'
+        WHEN encounters.encounterclass = 'inpatient' THEN 'NA'
         WHEN adm.non_ip_encounter_id IS NOT NULL THEN '1'
         ELSE '0'
     END AS admitted_within_10d,
     {{ remove_unnecessary_whitespace("
         COALESCE(
-            adm.admitted_within_10d_reason, 
+            adm.admitted_within_10d_reason,
             adm.admitted_within_10d_description
         )
     ") }} AS admitted_within_10d_reason,
@@ -166,9 +160,9 @@ SELECT
 
     -- billing types
     CASE
-        WHEN encounters.PAYER IS NOT NULL 
-            AND encounters.PAYER <> 'b1c428d6-4f07-31e0-90f0-68ffa6ff8c76' -- id for "NO INSURANCE"
-            AND procedures.ENCOUNTER IS NOT NULL
+        WHEN encounters.payer IS NOT NULL
+            AND encounters.payer <> 'b1c428d6-4f07-31e0-90f0-68ffa6ff8c76'
+            AND procedures.encounter IS NOT NULL
             THEN 'FPP'
         ELSE 'Per Diem'
     END AS encounter_billing_type
@@ -176,29 +170,25 @@ SELECT
 FROM {{ source('bronze', 'encounters') }} AS encounters
 
 LEFT JOIN allergies
-    ON encounters.Id = allergies.ENCOUNTER
-    AND encounters.PATIENT = allergies.PATIENT
+    ON encounters.id = allergies.encounter
+    AND encounters.patient = allergies.patient
 
 LEFT JOIN careplans
-    ON encounters.Id = careplans.ENCOUNTER
-    AND encounters.PATIENT = careplans.PATIENT
+    ON encounters.id = careplans.encounter
+    AND encounters.patient = careplans.patient
 
 LEFT JOIN conditions
-    ON encounters.Id = conditions.ENCOUNTER
-    AND encounters.PATIENT = conditions.PATIENT
-
-LEFT JOIN {{ source('bronze', 'devices') }} AS devices
-    ON encounters.Id = devices.ENCOUNTER
-    AND encounters.PATIENT = devices.PATIENT
+    ON encounters.id = conditions.encounter
+    AND encounters.patient = conditions.patient
 
 LEFT JOIN immunizations
-    ON encounters.Id = immunizations.ENCOUNTER
-    AND encounters.PATIENT = immunizations.PATIENT
+    ON encounters.id = immunizations.encounter
+    AND encounters.patient = immunizations.patient
 
 LEFT JOIN procedures
-    ON encounters.Id = procedures.ENCOUNTER
-    AND encounters.PATIENT = procedures.PATIENT
+    ON encounters.id = procedures.encounter
+    AND encounters.patient = procedures.patient
 
 LEFT JOIN admissions_within_10d AS adm
-    ON encounters.Id = adm.non_ip_encounter_id
+    ON encounters.id = adm.non_ip_encounter_id
     AND adm.row_num = 1

@@ -1,44 +1,48 @@
 WITH transformed_meds AS (
     SELECT
-        START AS med_start_date_time,
-        CAST(START AS DATE) AS med_start_date,
-        DATE_FORMAT(START, 'HH:mm:ss') AS med_start_time,
-        STOP AS med_end_date_time,
-        CAST(STOP AS DATE) AS med_end_date,
-        DATE_FORMAT(STOP, 'HH:mm:ss') AS med_end_time,
-        PATIENT AS patient_id,
-        PAYER AS payer_id,
-        ENCOUNTER AS encounter_id,
-        CAST(CODE AS STRING) AS code,
-        INITCAP(DESCRIPTION) AS med_description,
-        BASE_COST AS base_cost,
-        PAYER_COVERAGE AS payer_coverage,
-        DISPENSES AS dispenses,
-        TOTALCOST AS total_cost,
-        CAST(REASONCODE AS STRING) AS reason_code,
-        REASONDESCRIPTION AS reason,
+        start AS med_start_date_time,
+        CAST(start AS DATE) AS med_start_date,
+        DATE_FORMAT(start, 'HH:mm:ss') AS med_start_time,
+        stop AS med_end_date_time,
+        CAST(stop AS DATE) AS med_end_date,
+        DATE_FORMAT(stop, 'HH:mm:ss') AS med_end_time,
+        patient AS patient_id,
+        payer AS payer_id,
+        encounter AS encounter_id,
+        CAST(code AS STRING) AS code,
+        {{ capitalize_value('description') }} AS med_description,
+        base_cost,
+        payer_coverage,
+        dispenses,
+        totalcost AS total_cost,
+        CAST(reasoncode AS STRING) AS reason_code,
+        reasondescription AS reason,
 
         DATEDIFF(
             DAY,
-            LAG(STOP) OVER (PARTITION BY PATIENT, CODE ORDER BY START),
-            START
+            LAG(stop) OVER (PARTITION BY patient, code ORDER BY start),
+            start
         ) AS days_since_last_fill_ended,
-        DATEDIFF(DAY, START, STOP) AS days_supply,
 
-        CASE WHEN STOP IS NULL THEN 'Ongoing' ELSE 'Completed' END AS med_status,
+        DATEDIFF(DAY, start, stop) AS days_supply,
 
-        CASE 
-            WHEN ROW_NUMBER() OVER (PARTITION BY PATIENT, CODE ORDER BY START) > 1 THEN 'Refill' 
-            ELSE 'Initial' 
+        CASE
+            WHEN stop IS NULL THEN 'Ongoing'
+            ELSE 'Completed'
+        END AS med_status,
+
+        CASE
+            WHEN ROW_NUMBER() OVER (PARTITION BY patient, code ORDER BY start) > 1 THEN 'Refill'
+            ELSE 'Initial'
         END AS fill_type
     FROM {{ source('bronze', 'medications') }}
-    WHERE START <= STOP
+    WHERE start <= stop
 ),
 
 encounters AS (
     SELECT
-        Id AS id,
-        INITCAP(ENCOUNTERCLASS) AS encounter_class
+        id,
+        INITCAP(encounterclass) AS encounter_class
     FROM {{ source('bronze', 'encounters') }}
 ),
 
@@ -69,13 +73,15 @@ final_enhancements AS (
             WHEN days_since_last_fill_ended = 0 THEN 'Continuous'
             ELSE 'NA'
         END AS adherence_flag,
+
         CASE
             WHEN stddev_cost_per_drug = 0 THEN 'No Variance'
-            WHEN (total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) > 2 THEN 'High' -- cost is more than 2 standard deviations above the drug's average
-            WHEN (total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) < -2 THEN 'Low' -- cost is more than 2 standard deviations below the drug's average
+            WHEN (total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) > 2 THEN 'High'
+            WHEN (total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) < -2 THEN 'Low'
             ELSE 'Normal'
         END AS cost_outlier_flag
     FROM enhancements
 )
 
-SELECT * FROM final_enhancements
+SELECT *
+FROM final_enhancements

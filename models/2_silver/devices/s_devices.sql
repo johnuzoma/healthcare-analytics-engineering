@@ -1,13 +1,13 @@
 SELECT
-    START AS start_date_time,
-    CAST(START AS DATE) AS dv_start_date,
-    DATE_FORMAT(START, 'HH:mm:ss') AS dv_start_time,
-    STOP AS end_date_time,
-    CAST(STOP AS DATE) AS dv_end_date,
-    DATE_FORMAT(STOP, 'HH:mm:ss') AS dv_end_time,
-    PATIENT AS patient_id,
-    ENCOUNTER AS encounter_id,
-    CAST(CODE AS STRING) AS code,
-    DESCRIPTION AS dv_description,
-    UDI AS unique_device_identifier
+    start AS start_date_time,
+    CAST(start AS DATE) AS dv_start_date,
+    DATE_FORMAT(start, 'HH:mm:ss') AS dv_start_time,
+    stop AS end_date_time,
+    CAST(stop AS DATE) AS dv_end_date,
+    DATE_FORMAT(stop, 'HH:mm:ss') AS dv_end_time,
+    patient AS patient_id,
+    encounter AS encounter_id,
+    CAST(code AS STRING) AS code,
+    description AS dv_description,
+    udi AS unique_device_identifier
 FROM {{ source('bronze', 'devices') }}

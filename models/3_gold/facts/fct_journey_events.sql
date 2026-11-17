@@ -42,8 +42,8 @@ procedures AS (
     SELECT
         patient_id,
         encounter_id,
-        pr_date AS event_date,
-        pr_time AS event_time,
+        pr_start_date AS event_date,
+        pr_start_time AS event_time,
         'Procedure' AS event_type,
         pr_description AS event_name
     FROM {{ ref('s_procedures') }}
@@ -138,3 +138,5 @@ final AS (
 )
 
 SELECT * FROM final
+where patient_id = '3436e704-73e4-11da-241d-7adeccd97a0d'
+order by journey_seq_no, event_date, event_time

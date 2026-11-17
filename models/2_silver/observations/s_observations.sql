@@ -1,12 +1,15 @@
 SELECT
-    DATE AS obs_date_time,
-    CAST(DATE AS DATE) AS obs_date,
-    DATE_FORMAT(DATE, 'HH:mm:ss') AS obs_time,
-    PATIENT AS patient_id,
-    ENCOUNTER AS encounter_id,
-    CAST(CODE AS STRING) AS code,
-    DESCRIPTION AS obs_description,
-    VALUE AS obs_value,
-    UNITS AS units,
-    TYPE AS obs_type
+    date AS obs_date_time,
+    CAST(date AS DATE) AS obs_date,
+    DATE_FORMAT(date, 'HH:mm:ss') AS obs_time,
+    patient AS patient_id,
+    encounter AS encounter_id,
+    INITCAP(
+        REPLACE(category, '-', ' ')
+    ) AS category,
+    code,
+    description AS obs_description,
+    value AS obs_value,
+    units AS units,
+    type AS obs_type
 FROM {{ source('bronze', 'observations') }}

@@ -1,14 +1,14 @@
 SELECT
-    Id AS id,
-    ORGANIZATION AS organization_id,
-    REGEXP_REPLACE(NAME, '[0-9]+', '') AS provider_name,
-    GENDER AS gender,
-    {{ capitalize_value('SPECIALITY') }} AS specialty,
-    ADDRESS AS provider_address,
-    CITY AS city,
-    STATE AS provider_state,
-    ZIP AS zip,
-    LAT AS lat,
-    LON AS lon,
-    UTILIZATION AS utilization
+    id AS id,
+    organization AS organization_id,
+    REGEXP_REPLACE(name, '[0-9]+', '') AS provider_name,
+    gender,
+    {{ capitalize_value('speciality') }} AS provider_specialty,
+    {{ capitalize_value('address') }} AS provider_address,
+    {{ capitalize_value('city') }} AS provider_city,
+    state AS provider_state,
+    zip,
+    lat,
+    lon,
+    utilization
 FROM {{ source('bronze', 'providers') }}

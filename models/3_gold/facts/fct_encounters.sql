@@ -23,8 +23,6 @@ SELECT
     number_of_careplans,
     had_a_condition,
     number_of_conditions,
-    used_a_device,
-    device_name,
     had_an_immunization,
     number_of_immunizations,
     total_cost_of_immunizations,
