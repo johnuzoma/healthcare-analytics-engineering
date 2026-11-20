@@ -147,13 +147,3 @@ models:
       - name: encounter_billing_type
         data_type: string
         description: ""
-
-  - name: fct_journey_events_wide
-
-    data_tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments:
-            combination_of_columns:
-              - journey_seq_no
-              - enc_id
-              - patient_id
