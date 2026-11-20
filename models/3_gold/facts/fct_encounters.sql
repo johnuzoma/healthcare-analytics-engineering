@@ -1,5 +1,5 @@
 SELECT
-    encounter_id,
+    enc_id,
     enc_start_date_time,
     enc_start_date,
     enc_start_time,

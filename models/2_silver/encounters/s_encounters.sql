@@ -68,7 +68,7 @@ admissions_within_10d AS (
 
 SELECT
     -- encounter overview
-    encounters.id AS encounter_id,
+    encounters.id AS enc_id,
     encounters.start AS enc_start_date_time,
     CAST(encounters.start AS DATE) AS enc_start_date,
     DATE_FORMAT(encounters.start, 'HH:mm:ss') AS enc_start_time,

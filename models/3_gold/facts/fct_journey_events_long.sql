@@ -2,7 +2,7 @@ WITH conditions AS (
     SELECT
         --journey_seq_no,
         patient_id,
-        encounter_id,
+        enc_id,
         cond_start_date AS event_date,
         NULL AS event_time,
         CONCAT(condition_type, ' Condition') AS event_type,
@@ -16,7 +16,7 @@ encounters AS (
     SELECT
         --journey_seq_no,
         patient_id,
-        encounter_id,
+        enc_id,
         enc_start_date AS event_date,
         enc_start_time AS event_time,
         encounter_class AS event_type,
@@ -36,7 +36,7 @@ encounters AS (
 careplans AS (
     SELECT
         patient_id,
-        encounter_id,
+        enc_id,
         cp_start_date AS event_date,
         NULL AS event_time,
         'Careplan' AS event_type,
@@ -49,12 +49,12 @@ careplans AS (
 procedures AS (
     SELECT
         patient_id,
-        encounter_id,
+        enc_id,
         pr_start_date AS event_date,
         pr_start_time AS event_time,
         'Procedure' AS event_type,
         pr_description AS event_name,
-        base_cost AS cost,
+        pr_base_cost AS cost,
         11 AS event_sort
     FROM {{ ref('s_procedures') }}
 ),
@@ -62,7 +62,7 @@ procedures AS (
 imaging_studies AS (
     SELECT
         patient_id,
-        encounter_id,
+        enc_id,
         im_date AS event_date,
         im_time AS event_time,
         'Imaging Study' AS event_type,
@@ -75,12 +75,12 @@ imaging_studies AS (
 immunizations AS (
     SELECT
         patient_id,
-        encounter_id,
+        enc_id,
         imm_date AS event_date,
         imm_time AS event_time,
         'Immunization' AS event_type,
         imm_description AS event_name,
-        base_cost,
+        imm_base_cost AS cost,
         12 AS event_sort
     FROM {{ ref('s_immunizations') }}
 ),
@@ -88,7 +88,7 @@ immunizations AS (
 allergies AS (
     SELECT
         patient_id,
-        encounter_id,
+        enc_id,
         alg_start_date AS event_date,
         NULL AS event_time,
         alg_type AS event_type,
@@ -101,7 +101,7 @@ allergies AS (
 observations AS (
     SELECT      
         patient_id,
-        encounter_id,
+        enc_id,
         obs_date AS event_date,
         obs_time AS event_time,
         'Observation' AS event_type,
@@ -114,12 +114,12 @@ observations AS (
 medications AS (
     SELECT
         patient_id,
-        encounter_id,
+        enc_id,
         med_start_date AS event_date,
         med_start_time AS event_time,
         'Medication' AS event_type,
         med_description AS event_name,
-        total_cost AS cost,
+        med_total_cost AS cost,
         13 AS event_sort
     FROM {{ ref('s_medications') }}
 ),
@@ -155,4 +155,5 @@ SELECT
     ) AS days_since_previous_event
 FROM unioned AS u
 LEFT JOIN {{ ref('s_encounter_journeys') }} AS ej
-    ON u.encounter_id = ej.encounter_id
+    ON u.enc_id = ej.enc_id
+WHERE u.patient_id = '0288c42c-43a1-9878-4a9d-6b96caa12c40' and ej.journey_seq_no is not null

@@ -4,7 +4,7 @@ SELECT
     CAST(date AS DATE) AS im_date,
     DATE_FORMAT(date, 'HH:mm:ss') AS im_time,
     patient AS patient_id,
-    encounter AS encounter_id,
+    encounter AS enc_id,
     series_uid,
     CAST(bodysite_code AS STRING) AS bodysite_code,
     bodysite_description AS bodysite_description,

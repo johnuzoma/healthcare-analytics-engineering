@@ -3,8 +3,8 @@ SELECT
     CAST(date AS DATE) AS imm_date,
     DATE_FORMAT(date, 'HH:mm:ss') AS imm_time,
     patient AS patient_id,
-    encounter AS encounter_id,
+    encounter AS enc_id,
     CAST(code AS STRING) AS code,
     description AS imm_description,
-    base_cost AS base_cost
+    base_cost AS imm_base_cost
 FROM {{ source('bronze', 'immunizations') }}

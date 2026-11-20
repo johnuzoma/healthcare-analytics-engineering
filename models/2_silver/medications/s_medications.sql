@@ -1,22 +1,22 @@
 WITH transformed_meds AS (
     SELECT
-        start AS med_start_date_time,
+        start AS med_start_ts,
         CAST(start AS DATE) AS med_start_date,
         DATE_FORMAT(start, 'HH:mm:ss') AS med_start_time,
-        stop AS med_end_date_time,
+        stop AS med_end_ts,
         CAST(stop AS DATE) AS med_end_date,
         DATE_FORMAT(stop, 'HH:mm:ss') AS med_end_time,
         patient AS patient_id,
         payer AS payer_id,
-        encounter AS encounter_id,
+        encounter AS enc_id,
         CAST(code AS STRING) AS code,
         {{ capitalize_value('description') }} AS med_description,
-        base_cost,
-        payer_coverage,
+        base_cost AS med_base_cost,
+        payer_coverage AS med_payer_coverage,
         dispenses,
-        totalcost AS total_cost,
+        totalcost AS med_total_cost,
         CAST(reasoncode AS STRING) AS reason_code,
-        reasondescription AS reason,
+        reasondescription AS med_reason,
 
         DATEDIFF(
             DAY,
@@ -52,16 +52,16 @@ enhancements AS (
 
         encounters.encounter_class,
 
-        (meds.total_cost - meds.payer_coverage) AS patient_responsibility,
+        (meds.med_total_cost - meds.med_payer_coverage) AS med_patient_responsibility,
 
-        meds.payer_coverage / meds.total_cost AS coverage_ratio,
+        meds.med_payer_coverage / meds.med_total_cost AS coverage_ratio,
 
-        AVG(meds.total_cost) OVER (PARTITION BY meds.code) AS avg_cost_per_drug,
+        AVG(meds.med_total_cost) OVER (PARTITION BY meds.code) AS avg_cost_per_drug,
 
-        STDDEV(meds.total_cost) OVER (PARTITION BY meds.code) AS stddev_cost_per_drug
+        STDDEV(meds.med_total_cost) OVER (PARTITION BY meds.code) AS stddev_cost_per_drug
     FROM transformed_meds meds
     LEFT JOIN encounters
-        ON meds.encounter_id = encounters.id
+        ON meds.enc_id = encounters.id
 ),
 
 final_enhancements AS (
@@ -76,8 +76,8 @@ final_enhancements AS (
 
         CASE
             WHEN stddev_cost_per_drug = 0 THEN 'No Variance'
-            WHEN (total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) > 2 THEN 'High'
-            WHEN (total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) < -2 THEN 'Low'
+            WHEN (med_total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) > 2 THEN 'High'
+            WHEN (med_total_cost - avg_cost_per_drug) / NULLIF(stddev_cost_per_drug, 0) < -2 THEN 'Low'
             ELSE 'Normal'
         END AS cost_outlier_flag
     FROM enhancements

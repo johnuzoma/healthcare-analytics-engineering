@@ -175,6 +175,15 @@ models:
       - name: encounter_billing_type
         data_type: string
 
+  - name: s_encounter_journeys
+
+    columns:
+      - name: encounter_id
+        data_type: string
+        data_tests:
+          - unique
+          - not_null
+
 unit_tests:
   - name: test_admitted_within_10d
     model: s_encounters
