@@ -98,13 +98,7 @@ SELECT
     CAST(encounters.code AS STRING) AS code,
     encounters.description AS encounter_description,
     CAST(encounters.reasoncode AS STRING) AS reason_code,
-    {{ remove_unnecessary_whitespace("
-        COALESCE(
-            encounters.reasondescription,
-            encounters.description,
-            'Not Given'
-        )
-    ") }} AS encounter_reason,
+    {{ remove_unnecessary_whitespace("encounters.reasondescription") }} AS encounter_reason,
 
     -- allergies
     CASE

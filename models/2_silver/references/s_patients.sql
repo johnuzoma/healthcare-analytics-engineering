@@ -5,8 +5,8 @@ WITH transformed_patients AS (
             WHEN deathdate IS NULL THEN 'Y'
             ELSE 'N'
         END AS is_alive,
-        birthdate,
-        deathdate,
+        birthdate AS birth_date,
+        deathdate AS death_date,
         DATEDIFF(YEAR, birthdate, COALESCE(deathdate, CURRENT_DATE())) AS age,
         DATEDIFF(YEAR, deathdate, CURRENT_DATE()) AS years_since_death,
         ssn,

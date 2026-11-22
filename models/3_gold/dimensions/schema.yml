@@ -255,3 +255,10 @@ models:
       - name: member_months
         data_type: bigint
         description: ""
+  
+  - name: dim_journey
+    columns: 
+      - name: jny_id
+        data_tests:
+          - unique
+          - not_null

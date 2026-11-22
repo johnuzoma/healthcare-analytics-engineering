@@ -112,21 +112,30 @@ chain_min AS (
 
 journey_map AS (
     SELECT
-        patient_id,
-        base_journey_seq_no,
-        MIN(chain_target) AS merged_journey_seq_no
-    FROM chain_min
-    GROUP BY patient_id, base_journey_seq_no
+        DENSE_RANK() OVER (
+            PARTITION BY b.patient_id
+            ORDER BY COALESCE(m.merged_journey_seq_no, b.base_journey_seq_no)
+        ) AS jny_seq_no,
+        b.*
+    FROM based AS b
+    LEFT JOIN (
+        SELECT
+            patient_id,
+            base_journey_seq_no,
+            MIN(chain_target) AS merged_journey_seq_no
+        FROM chain_min
+        GROUP BY patient_id, base_journey_seq_no
+    ) m
+        ON b.patient_id = m.patient_id
+        AND b.base_journey_seq_no = m.base_journey_seq_no
 )
 
 SELECT
-    DENSE_RANK() OVER (
-        PARTITION BY b.patient_id
-        ORDER BY COALESCE(m.merged_journey_seq_no, b.base_journey_seq_no)
-    ) AS journey_seq_no,
-    b.*
-FROM based AS b
-LEFT JOIN journey_map AS m
-    ON b.patient_id = m.patient_id
-    AND b.base_journey_seq_no = m.base_journey_seq_no
-WHERE b.patient_id = '0288c42c-43a1-9878-4a9d-6b96caa12c40' and b.enc_id is not null
+    MD5(
+        CONCAT(COALESCE(jny_seq_no, ''), patient_id)
+    ) AS jny_id,
+    *
+FROM journey_map
+--where patient_id = '00126cb9-8460-4747-e302-c3609684531e'
+--where patient_id = '0288c42c-43a1-9878-4a9d-6b96caa12c40' --and journey_seq_no = 7
+--order by journey_seq_no, enc_start_ts

@@ -4,9 +4,8 @@ SELECT
     patient AS patient_id,
     encounter AS enc_id,
     CAST(CODE AS STRING) AS code,
-     {{ capitalize_value("
-        CONCAT(category, ' ', type)
-    ") }} AS alg_type,
+    {{ capitalize_value("category") }} AS alg_category,
+    {{ capitalize_value("type") }} AS alg_type,
     description AS alg_description,
     {{ capitalize_value("
         (CONCAT(severity1, ' ', description1))

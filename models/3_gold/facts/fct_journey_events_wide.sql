@@ -19,7 +19,8 @@ SELECT
     ej.payer_coverage,
     ej.patient_responsibility,
     ej.days_since_previous_encounter,
-    
+    ej.days_since_journey_start,
+
     -- allergies
     alg.alg_start_date,
     alg.alg_end_date,
