@@ -4,13 +4,13 @@ models:
   - name: s_medications
     description: "Silver medications table"
     columns:
-      - name: med_start_date_time
+      - name: med_start_ts
         data_type: timestamp_ltz
         data_tests:
           - not_null
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "<= med_end_date_time"
+                expression: "<= med_end_ts"
               config: 
                 store_failures: true
 
@@ -21,7 +21,7 @@ models:
       - name: med_start_time
         data_type: string
         
-      - name: med_end_date_time
+      - name: med_end_ts
         data_type: timestamp_ltz
 
       - name: med_end_date

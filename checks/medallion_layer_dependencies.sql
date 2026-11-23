@@ -12,17 +12,20 @@ WITH nodes AS (
         unique_id,
         CASE
             WHEN schema_name = '1_bronze' THEN 'bronze'
-            WHEN schema_name = '2_silver' THEN 'silver'
+            WHEN schema_name = '2_silver' AND name LIKE 's_%' THEN 'silver'
+            WHEN schema_name = '2_silver' AND name LIKE 'int_%' THEN 'int_silver'
             WHEN schema_name = '3_gold' THEN 'gold'
         END AS layer
-    FROM {{ info_schema('models') }}
+   FROM {{ info_schema('models') }}
 ),
 
 allowed (parent_layer, child_layer) AS (
     VALUES
-        ('bronze', 'bronze'),
         ('bronze', 'silver'),
-        ('silver', 'gold')
+        ('silver', 'int_silver'),
+        ('int_silver', 'int_silver'),
+        ('silver', 'gold'),
+        ('int_silver', 'gold')
 )
 
 SELECT

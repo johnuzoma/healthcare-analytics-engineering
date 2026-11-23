@@ -4,7 +4,7 @@ models:
   - name: s_encounters
     
     columns:
-      - name: encounter_id
+      - name: enc_id
         data_type: string
         data_tests:
           - unique
@@ -178,7 +178,7 @@ models:
   - name: s_encounter_journeys
 
     columns:
-      - name: encounter_id
+      - name: enc_id
         data_type: string
         data_tests:
           - unique
@@ -210,9 +210,9 @@ unit_tests:
         rows: []
     expect:
       rows:
-        - {encounter_id: e1, admitted_within_10d: '1', admitted_within_10d_start_date: "2024-01-03"}
-        - {encounter_id: e2, admitted_within_10d: 'NA'}
-        - {encounter_id: e3, admitted_within_10d: 'NA'}
-        - {encounter_id: e4, admitted_within_10d: '1', admitted_within_10d_start_date: "2024-01-11"}
-        - {encounter_id: e5, admitted_within_10d: 'NA'}
-        - {encounter_id: e6, admitted_within_10d: 'NA'}
+        - {enc_id: e1, admitted_within_10d: '1', admitted_within_10d_start_date: "2024-01-03"}
+        - {enc_id: e2, admitted_within_10d: 'NA'}
+        - {enc_id: e3, admitted_within_10d: 'NA'}
+        - {enc_id: e4, admitted_within_10d: '1', admitted_within_10d_start_date: "2024-01-11"}
+        - {enc_id: e5, admitted_within_10d: 'NA'}
+        - {enc_id: e6, admitted_within_10d: 'NA'}

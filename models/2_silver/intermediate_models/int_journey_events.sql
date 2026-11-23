@@ -14,27 +14,32 @@ WITH conditions AS (
     FROM {{ ref('s_conditions') }}
 ),
 
-encounters AS (
+encounter_jnys AS (
     SELECT
+        jny_id,
+        jny_seq_no,
         patient_id,
         enc_id,
         enc_start_date AS event_start_date,
         enc_start_time AS event_start_time,
         enc_end_date AS event_end_date,
         enc_end_time AS event_end_time,
-        encounter_class AS event_type,
-        encounter_description AS event_description,
-        encounter_reason AS event_reason,
-        base_encounter_cost AS cost,
+        enc_class AS event_type,
+        enc_description AS event_description,
+        enc_reason AS event_reason,
+        base_enc_cost AS cost,
         CASE
-            WHEN encounter_class = 'Wellness' THEN 1
-            WHEN encounter_class = 'Outpatient' THEN 2
-            WHEN encounter_class = 'Ambulatory' THEN 3
-            WHEN encounter_class = 'Emergency' THEN 4
-            WHEN encounter_class = 'Urgent Care' THEN 5
-            WHEN encounter_class = 'Inpatient' THEN 6
-        END AS event_sort
-    FROM {{ ref('s_encounters') }}
+            WHEN enc_class = 'Wellness' THEN 1
+            WHEN enc_class = 'Outpatient' THEN 2
+            WHEN enc_class = 'Ambulatory' THEN 3
+            WHEN enc_class = 'Emergency' THEN 4
+            WHEN enc_class = 'Urgent Care' THEN 5
+            WHEN enc_class = 'Inpatient' THEN 6
+        END AS event_sort,
+        provider_id,
+        organization_id,
+        payer_id
+    FROM {{ ref('s_encounter_journeys') }}
 ),
 
 careplans AS (
@@ -150,8 +155,6 @@ medications AS (
 ),
 
 unioned AS (
-    SELECT * FROM encounters
-    UNION ALL
     SELECT * FROM allergies
     UNION ALL
     SELECT * FROM observations
@@ -167,30 +170,22 @@ unioned AS (
     SELECT * FROM medications
     UNION ALL
     SELECT * FROM careplans
+),
+
+journeyed AS (
+    SELECT
+        ej.jny_id,
+        ej.jny_seq_no,
+        u.*, 
+        ej.provider_id,
+        ej.organization_id,
+        ej.payer_id,
+        0 AS is_encounter
+    FROM unioned AS u
+    INNER JOIN encounter_jnys AS ej
+        ON u.enc_id = ej.enc_id
 )
 
-SELECT
-    ej.jny_id,
-    ej.jny_seq_no,
-    u.*, 
-    ej.provider_id,
-    ej.organization_id,
-    ej.payer_id,
-    DATEDIFF(
-        DAY, 
-        LAG(u.event_start_date) OVER (PARTITION BY u.patient_id ORDER BY ej.jny_seq_no, u.event_start_date, u.event_sort, u.event_start_time),
-        u.event_start_date
-    ) AS days_since_previous_event,
-    DATEDIFF(
-        DAY, 
-        MIN(event_start_date) OVER (PARTITION BY ej.jny_id ORDER BY event_start_date, event_sort, event_start_time), 
-        event_start_date
-    ) AS days_since_jny_start
-FROM unioned AS u
-LEFT JOIN {{ ref('s_encounter_journeys') }} AS ej
-    ON u.enc_id = ej.enc_id
-
---where ej.jny_id = '01ccaf175f777a47f8feb631eacba56f'
---order by u.event_start_date
---WHERE u.patient_id = '0288c42c-43a1-9878-4a9d-6b96caa12c40' and ej.jny_seq_no is not null
---order by ej.jny_seq_no, u.event_start_date, u.event_sort
+SELECT *, 1 AS is_encounter FROM encounter_jnys
+UNION ALL
+SELECT * FROM journeyed
