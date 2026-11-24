@@ -1,7 +1,7 @@
 WITH date_spine AS (
     {{ dbt_utils.date_spine(
         datepart="day",
-        start_date="CAST('1913-01-01' AS DATE)",
+        start_date="CAST('1901-01-01' AS DATE)",
         end_date="CURRENT_DATE()"
     ) }}
 )
