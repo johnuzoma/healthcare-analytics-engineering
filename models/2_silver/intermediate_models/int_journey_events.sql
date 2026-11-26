@@ -6,7 +6,10 @@ WITH conditions AS (
         NULL AS event_start_time,
         cond_end_date AS event_end_date,
         NULL AS event_end_time,
-        CONCAT(condition_type, ' Condition') AS event_type,
+        CASE
+            WHEN condition_type IN ('Situation', 'Finding') THEN condition_type
+            ELSE CONCAT(condition_type, ' Condition')
+        END AS event_type,
         condition_name AS event_description,
         NULL AS event_reason,
         NULL AS cost,
@@ -38,7 +41,8 @@ encounter_jnys AS (
         END AS event_sort,
         provider_id,
         organization_id,
-        payer_id
+        payer_id,
+        is_admission_within_10d
     FROM {{ ref('s_encounter_journeys') }}
 ),
 
@@ -180,6 +184,7 @@ journeyed AS (
         ej.provider_id,
         ej.organization_id,
         ej.payer_id,
+        'NA' AS is_admission_within_10d,
         0 AS is_encounter
     FROM unioned AS u
     INNER JOIN encounter_jnys AS ej

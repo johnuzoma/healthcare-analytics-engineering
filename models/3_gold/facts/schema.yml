@@ -147,3 +147,196 @@ models:
       - name: encounter_billing_type
         data_type: string
         description: ""
+
+  - name: fct_journey_events
+    description: |
+      ......
+
+    columns:
+
+  - name: fct_journey_breakpoints
+    description: |
+      One row per breakpoint, meaning a point where a patient's care journey
+      dropped off or slowed down. Every row is a breakpoint, so the table has
+      no non-breakpoint rows. A journey can have several breakpoints, so
+      jny_id repeats. Relate this table to dim_journey on jny_id, and count
+      journeys with DISTINCTCOUNT(jny_id) rather than counting rows, because
+      one encounter can trigger more than one breakpoint type.
+
+      Breakpoint types:
+      - Gap in care: the patient returned within the same journey, but later
+        than the threshold for that journey type.
+      - Lost to follow-up: the journey is still ongoing, the patient is alive,
+        and no encounter of any kind has occurred since the expected return date.
+      - Careplan without follow-up: an open or long-running careplan with no
+        later patient encounter within 90 days.
+
+      Rules and assumptions:
+      - Expected-return thresholds by journey type are 365 days for Chronic, 400
+        for Preventive, 90 for Acute and Surgical, and 180 for everything else.
+      - "Overdue" is measured against the latest encounter date in the data
+        (the as-of date), not today's date.
+      - The *_changed flags compare the breakpoint encounter with the next
+        encounter. For Gap in care the next encounter is in the same journey.
+        For Careplan without follow-up it is the patient's next encounter in
+        any journey. Do not compare the flags across breakpoint types.
+      - Any later encounter, including wellness visits, counts as a return.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - jny_id
+              - enc_id
+              - breakpoint_type
+
+    columns:
+      - name: breakpoint_id
+        data_type: string
+        description: "Surrogate key: MD5 hash of jny_id, enc_id and breakpoint_type."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: jny_id
+        data_type: string
+        description: "Journey the breakpoint belongs to. Relates to dim_journey."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_journey')
+                field: jny_id
+
+      - name: patient_id
+        data_type: string
+        description: "Patient the journey belongs to."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_patient')
+                field: id
+
+      - name: enc_id
+        data_type: string
+        description: "Last encounter before the drop-off. The breakpoint is anchored to this encounter."
+        data_tests:
+          - not_null
+
+      - name: provider_id
+        data_type: string
+        description: "Provider at the anchoring encounter, meaning where the patient was last seen."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_provider')
+                field: id
+
+      - name: organization_id
+        data_type: string
+        description: "Organization (hospital or clinic) at the anchoring encounter."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_organization')
+                field: id
+
+      - name: payer_id
+        data_type: string
+        description: "Payer on the anchoring encounter."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_payer')
+                field: id
+
+      - name: breakpoint_type
+        data_type: string
+        description: "Kind of breakpoint: Gap in care, Lost to follow-up, or Careplan without follow-up."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Gap in care', 'Lost to follow-up', 'Careplan without follow-up']
+
+      - name: last_event_date
+        data_type: date
+        description: "Start date of the anchoring encounter, the last contact before the drop-off."
+        data_tests:
+          - not_null
+
+      - name: expected_next_date
+        data_type: date
+        description: "Date by which the next encounter was expected (last_event_date plus the threshold for the breakpoint type)."
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> last_event_date"
+              config:
+                store_failures: true
+
+      - name: actual_next_date
+        data_type: date
+        description: "Date the patient actually returned. NULL when the patient never returned."
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= last_event_date"
+              config:
+                store_failures: true
+
+      - name: days_overdue
+        data_type: bigint
+        description: "How many days past the expected date the patient returned, or for patients who never returned, how many days past it as of the dataset's latest date."
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "> 0"
+              config:
+                store_failures: true
+
+      - name: payer_changed
+        data_type: string
+        description: "Y if the payer differs on the next encounter, N if not, NA if the patient never returned."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Y', 'N', 'NA']
+
+      - name: provider_changed
+        data_type: string
+        description: "Y if the provider differs on the next encounter, N if not, NA if the patient never returned."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Y', 'N', 'NA']
+
+      - name: hospital_changed
+        data_type: string
+        description: "Y if the organization differs on the next encounter, N if not, NA if the patient never returned."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Y', 'N', 'NA']
+
+      - name: returned
+        data_type: string
+        description: "Y if the patient had a later encounter (actual_next_date is set), otherwise N."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Y', 'N']
+
+      - name: days_to_return
+        data_type: bigint
+        description: "Days from last_event_date to actual_next_date. NULL when the patient never returned."
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+              config:
+                store_failures: true

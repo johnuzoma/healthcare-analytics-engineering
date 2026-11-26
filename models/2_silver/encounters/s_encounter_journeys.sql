@@ -86,7 +86,7 @@ based AS (
             WHEN enc.enc_class = 'Inpatient' THEN 'NA'
             WHEN adm.non_ip_enc_id IS NOT NULL THEN 'Y'
             ELSE 'N'
-        END AS admitted_within_10d,
+        END AS is_admission_within_10d,
         {{ remove_unnecessary_whitespace("
             COALESCE(
                 adm.admitted_within_10d_reason,
@@ -177,7 +177,7 @@ journey_map AS (
 
 SELECT
     MD5(
-        CONCAT(COALESCE(jny_seq_no, ''), patient_id)
+        CONCAT_WS('|', CAST(jny_seq_no AS STRING), patient_id)
     ) AS jny_id,
     *
 FROM journey_map

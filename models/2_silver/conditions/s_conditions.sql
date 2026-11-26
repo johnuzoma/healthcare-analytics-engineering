@@ -6,6 +6,8 @@ SELECT
     CAST(code AS STRING) AS condition_code,
     description AS condition_name,
     CASE
+        WHEN LOWER(description) LIKE '%(situation)%' THEN 'Situation'
+        WHEN LOWER(description) LIKE '%(finding)%' THEN 'Finding'
         WHEN stop IS NULL THEN 'Chronic'
         ELSE 'Acute'
     END AS condition_type
