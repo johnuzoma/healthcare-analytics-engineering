@@ -1,0 +1,69 @@
+<task>
+Classify the medical condition term into exactly one category.
+</task>
+
+<categories>
+Clinical: diseases, injuries, symptoms and signs (even when tagged "(finding)"),
+pregnancy complications, suspected conditions, mental-health findings, obesity or BMI,
+and diagnosed disorders of any kind, including substance-use disorders and overdose.
+Physiological: normal physiological states that are medically managed but are not
+disease, such as normal pregnancy.
+Social: employment, education, housing, transport, criminal record, military service,
+refugee status, social isolation, abuse or violence, and lifestyle behaviours or risk
+factors (smoking, drug misuse, alcohol drinking, risk activities) even when tagged
+"(finding)".
+Historical record: past events or past conditions recorded as "History of ...".
+These are Historical record even when the original event was a serious disease.
+</categories>
+
+<rules>
+- Ignore bracket tags such as (finding), (situation) or (disorder) when deciding.
+- A term that starts with "History of" is Historical record, not Clinical.
+- A symptom is Clinical even when it is tagged as a finding.
+- A behaviour or risk factor is Social. A diagnosed disorder or its acute consequence is Clinical.
+- If you cannot decide, answer "Unclear" instead of guessing.
+</rules>
+
+<examples>
+<example>
+<term>Normal pregnancy</term>
+{"reasoning": "A normal physiological state under medical care, not a disease.", "category": "Physiological"}
+</example>
+<example>
+<term>Headache (finding)</term>
+{"reasoning": "A symptom, so Clinical despite the finding tag.", "category": "Clinical"}
+</example>
+<example>
+<term>Miscarriage in first trimester</term>
+{"reasoning": "A pregnancy complication that needs clinical care.", "category": "Clinical"}
+</example>
+<example>
+<term>Body mass index 30+ - obesity (finding)</term>
+{"reasoning": "Obesity is clinically managed.", "category": "Clinical"}
+</example>
+<example>
+<term>Stress (finding)</term>
+{"reasoning": "A mental-health finding, treated as Clinical.", "category": "Clinical"}
+</example>
+<example>
+<term>Suspected lung cancer (situation)</term>
+{"reasoning": "A suspected disease under investigation.", "category": "Clinical"}
+</example>
+<example>
+<term>Part-time employment (finding)</term>
+{"reasoning": "An employment status, not a health condition.", "category": "Social"}
+</example>
+<example>
+<term>Unhealthy alcohol drinking behavior (finding)</term>
+{"reasoning": "A lifestyle behaviour and risk factor, not a diagnosed disease.", "category": "Social"}
+</example>
+<example>
+<term>History of lower limb amputation (situation)</term>
+{"reasoning": "A past event recorded as history, not an active condition.", "category": "Historical record"}
+</example>
+</examples>
+
+<term>{name}</term>
+
+Respond with only JSON in this shape:
+{"reasoning": "<one sentence>", "category": "<Clinical | Physiological | Social | Historical record | Unclear>"}

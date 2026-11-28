@@ -7,3 +7,6 @@ dbt_internal_packages/
 .user.yml
 profiles.yml
 dbt_cloud.yml
+.venv
+.env
+classify.py

@@ -1,0 +1,2 @@
+time,version,model,split,n,accuracy,invalid,unclear
+2026-11-28T13:41:38,v0,claude-haiku-5-5,dev,100,0.97,0,0

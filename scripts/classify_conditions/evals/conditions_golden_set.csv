@@ -1,0 +1,173 @@
+code,description,expected_category,split,note
+1734006,Fracture of the vertebral column with spinal cord injury,Clinical,dev,
+6072007,Bleeding from anus,Clinical,dev,
+7200002,Alcoholism,Clinical,test,substance use disorder
+11218009,Infection caused by Pseudomonas aeruginosa,Clinical,dev,
+15777000,Prediabetes,Clinical,test,
+16114001,Fracture of ankle,Clinical,test,
+19169002,Miscarriage in first trimester,Clinical,dev,pregnancy complication
+22253000,Pain (finding),Clinical,test,finding but clinically managed
+22298006,Myocardial Infarction,Clinical,dev,
+24079001,Atopic dermatitis,Clinical,dev,
+25064002,Headache (finding),Clinical,dev,symptom recorded as finding
+30832001,Rupture of patellar tendon,Clinical,dev,
+32911000,Homeless (finding),Social,test,
+33737001,Fracture of rib,Clinical,dev,
+35999006,Blighted ovum,Clinical,test,pregnancy complication
+36955009,Loss of taste (finding),Clinical,dev,symptom recorded as finding
+38822007,Cystitis,Clinical,dev,
+39848009,Whiplash injury to neck,Clinical,dev,
+40275004,Contact dermatitis,Clinical,dev,
+43724002,Chill (finding),Clinical,dev,symptom recorded as finding
+44054006,Diabetes,Clinical,dev,
+44465007,Sprain of ankle,Clinical,test,
+45816000,Pyelonephritis,Clinical,dev,
+47693006,Rupture of appendix,Clinical,dev,
+49436004,Atrial Fibrillation,Clinical,test,
+49727002,Cough (finding),Clinical,test,symptom recorded as finding
+53741008,Coronary Heart Disease,Clinical,dev,
+55680006,Drug overdose,Clinical,dev,
+55822004,Hyperlipidemia,Clinical,dev,
+56018004,Wheezing (finding),Clinical,dev,symptom recorded as finding
+57676002,Joint pain (finding),Clinical,dev,symptom recorded as finding
+58150001,Fracture of clavicle,Clinical,dev,
+59621000,Hypertension,Clinical,test,
+62106007,Concussion with no loss of consciousness,Clinical,dev,
+62564004,Concussion with loss of consciousness,Clinical,dev,
+65363002,Otitis media,Clinical,test,
+65966004,Fracture of forearm,Clinical,dev,
+66857006,Hemoptysis (finding),Clinical,dev,symptom recorded as finding
+68235000,Nasal congestion (finding),Clinical,dev,symptom recorded as finding
+68496003,Polyp of colon,Clinical,dev,
+68962001,Muscle pain (finding),Clinical,test,symptom recorded as finding
+69896004,Rheumatoid arthritis,Clinical,dev,
+70704007,Sprain of wrist,Clinical,dev,
+72892002,Normal pregnancy,Physiological,dev,no bracket tag; only Physiological example
+73438004,Unemployed (finding),Social,test,
+73595000,Stress (finding),Clinical,dev,judgment call: mental-health finding
+74400008,Appendicitis,Clinical,dev,
+79586000,Tubal pregnancy,Clinical,dev,pregnancy complication
+80583007,Severe anxiety (panic) (finding,Clinical,test,judgment call: mental-health finding; bracket truncated in source
+83664006,Idiopathic atrophic hypothyroidism,Clinical,dev,
+84229001,Fatigue (finding),Clinical,dev,symptom recorded as finding
+84757009,Epilepsy,Clinical,dev,
+90560007,Gout,Clinical,dev,
+93761005,Primary malignant neoplasm of colon,Clinical,test,
+94260004,Secondary malignant neoplasm of colon,Clinical,dev,
+95417003,Primary fibromyalgia syndrome,Clinical,dev,
+105531004,Housing unsatisfactory (finding),Social,dev,
+109838007,Overlapping malignant neoplasm of colon,Clinical,dev,
+110030002,Concussion injury of brain,Clinical,dev,
+126906006,Neoplasm of prostate,Clinical,dev,
+156073000,Fetus with unknown complication,Clinical,dev,pregnancy complication
+160903007,Full-time employment (finding),Social,dev,
+160904001,Part-time employment (finding),Social,dev,
+160968000,Risk activity involvement (finding),Social,dev,judgment call: lifestyle behaviour
+161622006,History of lower limb amputation (situation),Historical record,dev,history record
+162573006,Suspected lung cancer (situation),Clinical,dev,suspected condition
+162864005,Body mass index 30+ - obesity (finding),Clinical,dev,finding but clinically managed
+190905008,Cystic Fibrosis,Clinical,dev,
+195967001,Asthma,Clinical,test,
+196416002,Impacted molars,Clinical,dev,
+197927001,Recurrent urinary tract infection,Clinical,dev,
+198992004,Antepartum eclampsia,Clinical,dev,pregnancy complication
+201834006,Localized  primary osteoarthritis of the hand,Clinical,dev,double space in source
+221360009,Spasticity (finding),Clinical,dev,symptom recorded as finding
+224295006,Only received primary school education (finding),Social,test,
+224299000,Received higher education (finding),Social,dev,
+224355006,Served in armed forces (finding),Social,dev,
+225444004,At risk for suicide (finding),Clinical,dev,judgment call: mental-health finding
+230690007,Stroke,Clinical,test,
+232353008,Perennial allergic rhinitis with seasonal variation,Clinical,dev,
+233604007,Pneumonia,Clinical,dev,
+233678006,Childhood asthma,Clinical,dev,
+235919008,Cholelithiasis,Clinical,test,
+236077008,Protracted diarrhea,Clinical,dev,
+239720000,Tear of meniscus of knee,Clinical,dev,
+239872002,Osteoarthritis of hip,Clinical,test,
+239873007,Osteoarthritis of knee,Clinical,dev,
+248595008,Sputum finding (finding),Clinical,test,symptom recorded as finding
+249497008,Vomiting symptom (finding),Clinical,dev,symptom recorded as finding
+262574004,Bullet wound,Clinical,test,
+263102004,Fracture subluxation of wrist,Clinical,dev,
+266934004,Transport problems (finding),Social,dev,
+266948004,Has a criminal record (finding),Social,test,
+267036007,Dyspnea (finding),Clinical,dev,symptom recorded as finding
+267060006,Diarrhea symptom (finding),Clinical,dev,symptom recorded as finding
+267102003,Sore throat symptom (finding),Clinical,dev,symptom recorded as finding
+271825005,Respiratory distress (finding),Clinical,dev,symptom recorded as finding
+275272006,Brain damage - traumatic,Clinical,dev,
+283371005,Laceration of forearm,Clinical,test,
+283385000,Laceration of thigh,Clinical,dev,
+284549007,Laceration of hand,Clinical,dev,
+284551006,Laceration of foot,Clinical,dev,
+301011002,Escherichia coli urinary tract infection,Clinical,dev,
+307731004,Injury of tendon of the rotator cuff of shoulder,Clinical,dev,
+359817006,Closed fracture of hip,Clinical,dev,
+361055000,Misuses drugs (finding),Social,dev,judgment call: lifestyle behaviour
+363406005,Malignant tumor of colon,Clinical,dev,
+367498001,Seasonal allergic rhinitis,Clinical,test,
+370247008,Facial laceration,Clinical,dev,
+386661006,Fever (finding),Clinical,test,symptom recorded as finding
+398152000,Poor muscle tone (finding),Clinical,dev,symptom recorded as finding
+398254007,Preeclampsia,Clinical,test,pregnancy complication
+399211009,History of myocardial infarction (situation),Historical record,dev,history record
+403190006,First degree burn,Clinical,dev,
+403191005,Second degree burn,Clinical,test,
+403192003,Third degree burn,Clinical,dev,
+408512008,Body mass index 40+ - severely obese (finding),Clinical,test,finding but clinically managed
+410429000,Cardiac Arrest,Clinical,dev,
+422587007,Nausea (finding),Clinical,test,symptom recorded as finding
+422650009,Social isolation (finding),Social,dev,
+423315002,Limited social contact (finding),Social,dev,
+424393004,Reports of violence in the environment (finding),Social,test,abuse or violence
+427089005,Male Infertility,Clinical,test,
+428251008,History of appendectomy,Historical record,test,history record
+429007001,History of cardiac arrest (situation),Historical record,dev,history record
+444448004,Injury of medial collateral ligament of knee,Clinical,dev,
+444470001,Injury of anterior cruciate ligament,Clinical,test,
+446096008,Perennial allergic rhinitis,Clinical,dev,
+446654005,Refugee (person),Social,dev,person tag; status
+449868002,Smokes tobacco daily,Social,test,judgment call: lifestyle behaviour
+703151001,History of single seizure (situation),Historical record,test,history record
+706893006,Victim of intimate partner abuse (finding),Social,test,abuse or violence
+713197008,Recurrent rectal polyp,Clinical,dev,
+713458007,Lack of access to transportation (finding),Social,dev,
+741062008,Not in labor force (finding),Social,dev,
+840539006,COVID-19,Clinical,test,
+840544004,Suspected COVID-19,Clinical,test,suspected condition
+5251000175109,Received certificate of high school equivalency (finding),Social,dev,
+10939881000119104,Unhealthy alcohol drinking behavior (finding),Social,dev,judgment call: lifestyle behaviour
+HC001,History of stroke (situation),Historical record,hard_dev,history record
+HC002,History of hysterectomy,Historical record,hard_dev,history record
+HC003,Family history of breast cancer (situation),Historical record,hard_dev,judgment call: family history; does not start with History of
+HC004,History of tobacco use (situation),Historical record,hard_test,history rule vs lifestyle behaviour
+HC005,History of cesarean section (situation),Historical record,hard_dev,history record
+HC006,History of malignant neoplasm of breast (situation),Historical record,hard_test,history of a serious disease
+HC007,Pregnant (finding),Physiological,hard_dev,judgment call: normal physiological state
+HC008,Postmenopausal state (finding),Physiological,hard_test,judgment call: normal physiological state
+HC009,Postpartum state (finding),Physiological,hard_dev,judgment call: normal physiological state
+HC010,Breastfeeding (finding),Physiological,hard_test,judgment call: normal physiological state
+HC011,Retired (finding),Social,hard_dev,employment status
+HC012,Lives alone (finding),Social,hard_dev,living situation
+HC013,Divorced (finding),Social,hard_dev,marital status
+HC014,Never smoked tobacco (finding),Social,hard_dev,judgment call: negated lifestyle behaviour
+HC015,Victim of elder abuse (finding),Social,hard_test,abuse or violence
+HC016,Financial problem (finding),Social,hard_dev,
+HC017,Alcohol drinker (finding),Social,hard_test,judgment call: lifestyle behaviour
+HC018,Alcohol dependence (disorder),Clinical,hard_dev,diagnosed disorder vs behaviour
+HC019,Major depressive disorder (disorder),Clinical,hard_dev,
+HC020,Nicotine dependence (disorder),Clinical,hard_test,diagnosed disorder vs behaviour
+HC021,Gestational diabetes mellitus,Clinical,hard_dev,pregnancy complication
+HC022,Hyperemesis gravidarum,Clinical,hard_dev,pregnancy complication
+HC023,Suspected fracture (situation),Clinical,hard_dev,suspected condition
+HC024,Low back pain (finding),Clinical,hard_dev,symptom recorded as finding
+HC025,Sleep disturbance (finding),Clinical,hard_dev,symptom recorded as finding
+HC026,Raised blood pressure (finding),Clinical,hard_test,measurement finding
+HC027,Dehydration,Clinical,hard_dev,
+HC028,Malnutrition,Clinical,hard_test,
+HC029,Hypoglycemia,Clinical,hard_dev,
+HC030,Dental caries,Clinical,hard_dev,
+HC031,Hepatitis C,Clinical,hard_test,
+HC032,Dizziness (finding),Clinical,hard_dev,symptom recorded as finding
+HC033,Rash (finding),Clinical,hard_test,symptom recorded as finding

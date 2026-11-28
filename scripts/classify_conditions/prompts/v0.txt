@@ -1,0 +1,6 @@
+Classify the medical condition term into exactly one category:
+Clinical, Physiological, Social, Historical record, or Unclear.
+
+Term: {name}
+
+Respond with only JSON: {"reasoning": "<one sentence>", "category": "<label>"}

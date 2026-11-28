@@ -1,0 +1,123 @@
+[
+  {
+    "code": "HC004",
+    "description": "History of tobacco use (situation)",
+    "expected": "Historical record",
+    "predicted": "Historical record",
+    "valid": true,
+    "score": 1,
+    "reasoning": "The term begins with \"History of\", so it is a Historical record regardless of the underlying behaviour being a Social risk factor.",
+    "raw_output": "{\"reasoning\": \"The term begins with \\\"History of\\\", so it is a Historical record regardless of the underlying behaviour being a Social risk factor.\", \"category\": \"Historical record\"}",
+    "note": "history rule vs lifestyle behaviour"
+  },
+  {
+    "code": "HC006",
+    "description": "History of malignant neoplasm of breast (situation)",
+    "expected": "Historical record",
+    "predicted": "Historical record",
+    "valid": true,
+    "score": 1,
+    "reasoning": "The term starts with 'History of', so it is a past condition recorded as history and falls under Historical record regardless of the serious underlying disease.",
+    "raw_output": "{\"reasoning\": \"The term starts with 'History of', so it is a past condition recorded as history and falls under Historical record regardless of the serious underlying disease.\", \"category\": \"Historical record\"}",
+    "note": "history of a serious disease"
+  },
+  {
+    "code": "HC008",
+    "description": "Postmenopausal state (finding)",
+    "expected": "Physiological",
+    "predicted": "Physiological",
+    "valid": true,
+    "score": 1,
+    "reasoning": "Postmenopausal state is a normal physiological life stage, not a disease, so it falls under Physiological.",
+    "raw_output": "{\"reasoning\": \"Postmenopausal state is a normal physiological life stage, not a disease, so it falls under Physiological.\", \"category\": \"Physiological\"}",
+    "note": "judgment call: normal physiological state"
+  },
+  {
+    "code": "HC010",
+    "description": "Breastfeeding (finding)",
+    "expected": "Physiological",
+    "predicted": "Physiological",
+    "valid": true,
+    "score": 1,
+    "reasoning": "Breastfeeding is a normal physiological state/activity medically managed, not a disease, so it fits Physiological despite the finding tag.",
+    "raw_output": "{\"reasoning\": \"Breastfeeding is a normal physiological state/activity medically managed, not a disease, so it fits Physiological despite the finding tag.\", \"category\": \"Physiological\"}",
+    "note": "judgment call: normal physiological state"
+  },
+  {
+    "code": "HC015",
+    "description": "Victim of elder abuse (finding)",
+    "expected": "Social",
+    "predicted": "Social",
+    "valid": true,
+    "score": 1,
+    "reasoning": "Elder abuse is abuse or violence, which the rules classify as Social, and the finding tag is ignored.",
+    "raw_output": "{\"reasoning\": \"Elder abuse is abuse or violence, which the rules classify as Social, and the finding tag is ignored.\", \"category\": \"Social\"}",
+    "note": "abuse or violence"
+  },
+  {
+    "code": "HC017",
+    "description": "Alcohol drinker (finding)",
+    "expected": "Social",
+    "predicted": "Social",
+    "valid": true,
+    "score": 1,
+    "reasoning": "Alcohol drinking is a lifestyle behaviour and risk factor, which the rules classify as Social even when tagged as a finding.",
+    "raw_output": "{\"reasoning\": \"Alcohol drinking is a lifestyle behaviour and risk factor, which the rules classify as Social even when tagged as a finding.\", \"category\": \"Social\"}",
+    "note": "judgment call: lifestyle behaviour"
+  },
+  {
+    "code": "HC020",
+    "description": "Nicotine dependence (disorder)",
+    "expected": "Clinical",
+    "predicted": "Clinical",
+    "valid": true,
+    "score": 1,
+    "reasoning": "Nicotine dependence is a diagnosed substance-use disorder, which the rules classify as Clinical, even though smoking itself is a Social lifestyle behaviour.",
+    "raw_output": "{\"reasoning\": \"Nicotine dependence is a diagnosed substance-use disorder, which the rules classify as Clinical, even though smoking itself is a Social lifestyle behaviour.\", \"category\": \"Clinical\"}",
+    "note": "diagnosed disorder vs behaviour"
+  },
+  {
+    "code": "HC026",
+    "description": "Raised blood pressure (finding)",
+    "expected": "Clinical",
+    "predicted": "Clinical",
+    "valid": true,
+    "score": 1,
+    "reasoning": "Raised blood pressure is a clinical finding (hypertension-related sign), so it is Clinical despite the finding tag.",
+    "raw_output": "{\"reasoning\": \"Raised blood pressure is a clinical finding (hypertension-related sign), so it is Clinical despite the finding tag.\", \"category\": \"Clinical\"}",
+    "note": "measurement finding"
+  },
+  {
+    "code": "HC028",
+    "description": "Malnutrition",
+    "expected": "Clinical",
+    "predicted": "Clinical",
+    "valid": true,
+    "score": 1,
+    "reasoning": "Malnutrition is a diagnosed nutritional disorder with clinical consequences, so it falls under Clinical.",
+    "raw_output": "{\"reasoning\": \"Malnutrition is a diagnosed nutritional disorder with clinical consequences, so it falls under Clinical.\", \"category\": \"Clinical\"}",
+    "note": ""
+  },
+  {
+    "code": "HC031",
+    "description": "Hepatitis C",
+    "expected": "Clinical",
+    "predicted": "Clinical",
+    "valid": true,
+    "score": 1,
+    "reasoning": "Hepatitis C is a diagnosed infectious disease affecting the liver, so it is a clinical condition.",
+    "raw_output": "{\"reasoning\": \"Hepatitis C is a diagnosed infectious disease affecting the liver, so it is a clinical condition.\", \"category\": \"Clinical\"}",
+    "note": ""
+  },
+  {
+    "code": "HC033",
+    "description": "Rash (finding)",
+    "expected": "Clinical",
+    "predicted": "Clinical",
+    "valid": true,
+    "score": 1,
+    "reasoning": "A rash is a skin symptom, so it is Clinical despite the finding tag.",
+    "raw_output": "{\"reasoning\": \"A rash is a skin symptom, so it is Clinical despite the finding tag.\", \"category\": \"Clinical\"}",
+    "note": "symptom recorded as finding"
+  }
+]

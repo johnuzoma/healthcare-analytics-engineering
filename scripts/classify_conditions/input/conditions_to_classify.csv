@@ -1,0 +1,140 @@
+code,description
+1734006,Fracture of the vertebral column with spinal cord injury
+6072007,Bleeding from anus
+7200002,Alcoholism
+11218009,Infection caused by Pseudomonas aeruginosa
+15777000,Prediabetes
+16114001,Fracture of ankle
+19169002,Miscarriage in first trimester
+22253000,Pain (finding)
+22298006,Myocardial Infarction
+24079001,Atopic dermatitis
+25064002,Headache (finding)
+30832001,Rupture of patellar tendon
+32911000,Homeless (finding)
+33737001,Fracture of rib
+35999006,Blighted ovum
+36955009,Loss of taste (finding)
+38822007,Cystitis
+39848009,Whiplash injury to neck
+40275004,Contact dermatitis
+43724002,Chill (finding)
+44054006,Diabetes
+44465007,Sprain of ankle
+45816000,Pyelonephritis
+47693006,Rupture of appendix
+49436004,Atrial Fibrillation
+49727002,Cough (finding)
+53741008,Coronary Heart Disease
+55680006,Drug overdose
+55822004,Hyperlipidemia
+56018004,Wheezing (finding)
+57676002,Joint pain (finding)
+58150001,Fracture of clavicle
+59621000,Hypertension
+62106007,Concussion with no loss of consciousness
+62564004,Concussion with loss of consciousness
+65363002,Otitis media
+65966004,Fracture of forearm
+66857006,Hemoptysis (finding)
+68235000,Nasal congestion (finding)
+68496003,Polyp of colon
+68962001,Muscle pain (finding)
+69896004,Rheumatoid arthritis
+70704007,Sprain of wrist
+72892002,Normal pregnancy
+73438004,Unemployed (finding)
+73595000,Stress (finding)
+74400008,Appendicitis
+79586000,Tubal pregnancy
+80583007,Severe anxiety (panic) (finding
+83664006,Idiopathic atrophic hypothyroidism
+84229001,Fatigue (finding)
+84757009,Epilepsy
+90560007,Gout
+93761005,Primary malignant neoplasm of colon
+94260004,Secondary malignant neoplasm of colon
+95417003,Primary fibromyalgia syndrome
+105531004,Housing unsatisfactory (finding)
+109838007,Overlapping malignant neoplasm of colon
+110030002,Concussion injury of brain
+126906006,Neoplasm of prostate
+156073000,Fetus with unknown complication
+160903007,Full-time employment (finding)
+160904001,Part-time employment (finding)
+160968000,Risk activity involvement (finding)
+161622006,History of lower limb amputation (situation)
+162573006,Suspected lung cancer (situation)
+162864005,Body mass index 30+ - obesity (finding)
+190905008,Cystic Fibrosis
+195967001,Asthma
+196416002,Impacted molars
+197927001,Recurrent urinary tract infection
+198992004,Antepartum eclampsia
+201834006,Localized  primary osteoarthritis of the hand
+221360009,Spasticity (finding)
+224295006,Only received primary school education (finding)
+224299000,Received higher education (finding)
+224355006,Served in armed forces (finding)
+225444004,At risk for suicide (finding)
+230690007,Stroke
+232353008,Perennial allergic rhinitis with seasonal variation
+233604007,Pneumonia
+233678006,Childhood asthma
+235919008,Cholelithiasis
+236077008,Protracted diarrhea
+239720000,Tear of meniscus of knee
+239872002,Osteoarthritis of hip
+239873007,Osteoarthritis of knee
+248595008,Sputum finding (finding)
+249497008,Vomiting symptom (finding)
+262574004,Bullet wound
+263102004,Fracture subluxation of wrist
+266934004,Transport problems (finding)
+266948004,Has a criminal record (finding)
+267036007,Dyspnea (finding)
+267060006,Diarrhea symptom (finding)
+267102003,Sore throat symptom (finding)
+271825005,Respiratory distress (finding)
+275272006,Brain damage - traumatic
+283371005,Laceration of forearm
+283385000,Laceration of thigh
+284549007,Laceration of hand
+284551006,Laceration of foot
+301011002,Escherichia coli urinary tract infection
+307731004,Injury of tendon of the rotator cuff of shoulder
+359817006,Closed fracture of hip
+361055000,Misuses drugs (finding)
+363406005,Malignant tumor of colon
+367498001,Seasonal allergic rhinitis
+370247008,Facial laceration
+386661006,Fever (finding)
+398152000,Poor muscle tone (finding)
+398254007,Preeclampsia
+399211009,History of myocardial infarction (situation)
+403190006,First degree burn
+403191005,Second degree burn
+403192003,Third degree burn
+408512008,Body mass index 40+ - severely obese (finding)
+410429000,Cardiac Arrest
+422587007,Nausea (finding)
+422650009,Social isolation (finding)
+423315002,Limited social contact (finding)
+424393004,Reports of violence in the environment (finding)
+427089005,Male Infertility
+428251008,History of appendectomy
+429007001,History of cardiac arrest (situation)
+444448004,Injury of medial collateral ligament of knee
+444470001,Injury of anterior cruciate ligament
+446096008,Perennial allergic rhinitis
+446654005,Refugee (person)
+449868002,Smokes tobacco daily
+703151001,History of single seizure (situation)
+706893006,Victim of intimate partner abuse (finding)
+713197008,Recurrent rectal polyp
+713458007,Lack of access to transportation (finding)
+741062008,Not in labor force (finding)
+840539006,COVID-19
+840544004,Suspected COVID-19
+5251000175109,Received certificate of high school equivalency (finding)
+10939881000119104,Unhealthy alcohol drinking behavior (finding)
